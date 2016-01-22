@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxScrollView.h"
+#include "cocScrollView.h"
 #include "Grid.h"
 
 class ofApp : public ofBaseApp{
@@ -25,7 +25,7 @@ public:
     ofRectangle screenRect;
     ofRectangle windowRect;
     ofRectangle contentRect;
-    ofxScrollView scrollView;
+    ScrollView scrollView;
     
     Grid grid;
     

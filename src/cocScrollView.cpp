@@ -1,16 +1,16 @@
 //
-//  ofxScrollView.cpp
+//  ScrollView.cpp
 //  Created by Lukasz Karluk on 2/06/2014.
-//  http://julapy.com/
+//  http://codeoncanvas.cc
 //
 
-#include "ofxScrollView.h"
+#include "cocScrollView.h"
 
 //--------------------------------------------------------------
 static float const kEasingStop = 0.001;
 
 //--------------------------------------------------------------
-ofxScrollView::ofxScrollView() {
+ScrollView::ScrollView() {
     
     bUserInteractionEnabled = false;
     bPinchZoomEnabled = false;
@@ -52,12 +52,12 @@ ofxScrollView::ofxScrollView() {
 #endif
 }
 
-ofxScrollView::~ofxScrollView() {
+ScrollView::~ScrollView() {
     setUserInteraction(false);
 }
 
 //--------------------------------------------------------------
-void ofxScrollView::setUserInteraction(bool bEnable) {
+void ScrollView::setUserInteraction(bool bEnable) {
     if(bUserInteractionEnabled == bEnable) {
         return;
     }
@@ -65,76 +65,76 @@ void ofxScrollView::setUserInteraction(bool bEnable) {
         bUserInteractionEnabled = false;
         
 #ifdef TARGET_OPENGLES
-        ofRemoveListener(ofEvents().touchDown, this, &ofxScrollView::touchDown);
-        ofRemoveListener(ofEvents().touchMoved, this, &ofxScrollView::touchMoved);
-        ofRemoveListener(ofEvents().touchUp, this, &ofxScrollView::touchUp);
+        ofRemoveListener(ofEvents().touchDown, this, &ScrollView::touchDown);
+        ofRemoveListener(ofEvents().touchMoved, this, &ScrollView::touchMoved);
+        ofRemoveListener(ofEvents().touchUp, this, &ScrollView::touchUp);
 #else
-        ofRemoveListener(ofEvents().mousePressed, this, &ofxScrollView::mousePressed);
-        ofRemoveListener(ofEvents().mouseDragged, this, &ofxScrollView::mouseDragged);
-        ofRemoveListener(ofEvents().mouseReleased, this, &ofxScrollView::mouseReleased);
+        ofRemoveListener(ofEvents().mousePressed, this, &ScrollView::mousePressed);
+        ofRemoveListener(ofEvents().mouseDragged, this, &ScrollView::mouseDragged);
+        ofRemoveListener(ofEvents().mouseReleased, this, &ScrollView::mouseReleased);
 #endif
         
     } else {
         bUserInteractionEnabled = true;
         
 #ifdef TARGET_OPENGLES
-        ofAddListener(ofEvents().touchDown, this, &ofxScrollView::touchDown);
-        ofAddListener(ofEvents().touchMoved, this, &ofxScrollView::touchMoved);
-        ofAddListener(ofEvents().touchUp, this, &ofxScrollView::touchUp);
+        ofAddListener(ofEvents().touchDown, this, &ScrollView::touchDown);
+        ofAddListener(ofEvents().touchMoved, this, &ScrollView::touchMoved);
+        ofAddListener(ofEvents().touchUp, this, &ScrollView::touchUp);
 #else
-        ofAddListener(ofEvents().mousePressed, this, &ofxScrollView::mousePressed);
-        ofAddListener(ofEvents().mouseDragged, this, &ofxScrollView::mouseDragged);
-        ofAddListener(ofEvents().mouseReleased, this, &ofxScrollView::mouseReleased);
+        ofAddListener(ofEvents().mousePressed, this, &ScrollView::mousePressed);
+        ofAddListener(ofEvents().mouseDragged, this, &ScrollView::mouseDragged);
+        ofAddListener(ofEvents().mouseReleased, this, &ScrollView::mouseReleased);
 #endif
     }
 }
 
-void ofxScrollView::setPinchZoom(bool value) {
+void ScrollView::setPinchZoom(bool value) {
     bPinchZoomEnabled = value;
 }
 
-void ofxScrollView::setScrollEasing(float value) {
+void ScrollView::setScrollEasing(float value) {
     scrollEasing = value;
 }
 
-void ofxScrollView::setBounceBack(float value) {
+void ScrollView::setBounceBack(float value) {
     bounceBack = value;
 }
 
-void ofxScrollView::setDragVelocityDecay(float value) {
+void ScrollView::setDragVelocityDecay(float value) {
     dragVelDecay = value;
 }
 
-void ofxScrollView::setDoubleTapZoom(bool value) {
+void ScrollView::setDoubleTapZoom(bool value) {
     bDoubleTapZoomEnabled = value;
 }
 
-void ofxScrollView::setDoubleTapZoomRangeMin(float value) {
+void ScrollView::setDoubleTapZoomRangeMin(float value) {
     doubleTapZoomRangeMin = value;
 }
 
-void ofxScrollView::setDoubleTapZoomRangeMax(float value) {
+void ScrollView::setDoubleTapZoomRangeMax(float value) {
     doubleTapZoomRangeMax = value;
 }
 
-void ofxScrollView::setDoubleTapZoomIncrement(float value) {
+void ScrollView::setDoubleTapZoomIncrement(float value) {
     doubleTapZoomIncrement = value;
 }
 
-void ofxScrollView::setDoubleTapZoomIncrementTimeInSec(float value) {
+void ScrollView::setDoubleTapZoomIncrementTimeInSec(float value) {
     doubleTapZoomIncrementTimeInSec = value;
 }
 
-void ofxScrollView::setDoubleTapRegistrationTimeInSec(float value) {
+void ScrollView::setDoubleTapRegistrationTimeInSec(float value) {
     doubleTapRegistrationTimeInSec = value;
 }
 
-void ofxScrollView::setDoubleTapRegistrationDistanceInPixels(float value) {
+void ScrollView::setDoubleTapRegistrationDistanceInPixels(float value) {
     doubleTapRegistrationDistanceInPixels = value;
 }
 
 //--------------------------------------------------------------
-void ofxScrollView::setup() {
+void ScrollView::setup() {
     if(windowRect.isEmpty() == true) {
         setWindowRect(ofRectangle(0, 0, ofGetWidth(), ofGetHeight()));
     }
@@ -146,7 +146,7 @@ void ofxScrollView::setup() {
     reset();
 }
 
-void ofxScrollView::reset() {
+void ScrollView::reset() {
     touchPoints.clear();
     
     dragDownPos.set(0);
@@ -175,14 +175,14 @@ void ofxScrollView::reset() {
 }
 
 //--------------------------------------------------------------
-void ofxScrollView::setWindowRect(const ofRectangle & rect) {
+void ScrollView::setWindowRect(const ofRectangle & rect) {
     if(windowRect == rect) {
         return;
     }
     windowRect = rect;
 }
 
-void ofxScrollView::setContentRect(const ofRectangle & rect) {
+void ScrollView::setContentRect(const ofRectangle & rect) {
     if(contentRect == rect) {
         return;
     }
@@ -190,7 +190,7 @@ void ofxScrollView::setContentRect(const ofRectangle & rect) {
 }
 
 //--------------------------------------------------------------
-void ofxScrollView::fitContentToWindow(ofAspectRatioMode aspectRatioMode) {
+void ScrollView::fitContentToWindow(ofAspectRatioMode aspectRatioMode) {
     float sx = windowRect.width / contentRect.width;
     float sy = windowRect.height / contentRect.height;
     
@@ -208,69 +208,69 @@ void ofxScrollView::fitContentToWindow(ofAspectRatioMode aspectRatioMode) {
 }
 
 //--------------------------------------------------------------
-void ofxScrollView::setScale(float value) {
+void ScrollView::setScale(float value) {
     scale = value;
     scale = ofClamp(scale, scaleMin, scaleMax);
 }
 
-void ofxScrollView::setScaleMin(float value) {
+void ScrollView::setScaleMin(float value) {
     scaleMin = value;
     scale = ofClamp(scale, scaleMin, scaleMax);
 }
 
-void ofxScrollView::setScaleMax(float value) {
+void ScrollView::setScaleMax(float value) {
     scaleMax = value;
     scale = ofClamp(scale, scaleMin, scaleMax);
 }
 
 //--------------------------------------------------------------
-float ofxScrollView::getScale() {
+float ScrollView::getScale() {
     return scale;
 }
 
-float ofxScrollView::getScaleMin() {
+float ScrollView::getScaleMin() {
     return scaleMin;
 }
 
-float ofxScrollView::getScaleMax() {
+float ScrollView::getScaleMax() {
     return scaleMax;
 }
 
 //--------------------------------------------------------------
-void ofxScrollView::setZoom(float value) {
+void ScrollView::setZoom(float value) {
     float zoom = ofClamp(value, 0.0, 1.0);
     scale = zoomToScale(zoom);
 }
 
-float ofxScrollView::getZoom() {
+float ScrollView::getZoom() {
     float zoom = scaleToZoom(scale);
     return zoom;
 }
 
-bool ofxScrollView::isZoomed() {
+bool ScrollView::isZoomed() {
     float zoom = getZoom();
     return (zoom > 0.0);
 }
 
-bool ofxScrollView::isZoomedInMax() {
+bool ScrollView::isZoomedInMax() {
     float zoom = getZoom();
     return (zoom == 1.0);
 }
 
-bool ofxScrollView::isZoomedOutMax() {
+bool ScrollView::isZoomedOutMax() {
     float zoom = getZoom();
     return (zoom == 0.0);
 }
 
 //--------------------------------------------------------------
-float ofxScrollView::zoomToScale(float value) {
+float ScrollView::zoomToScale(float value) {
     if(scaleMin == scaleMax) {
         return scaleMin;
     }
     return ofMap(value, 0.0, 1.0, scaleMin, scaleMax, true);
 }
 
-float ofxScrollView::scaleToZoom(float value) {
+float ScrollView::scaleToZoom(float value) {
     if(scaleMin == scaleMax) {
         return 0.0;
     }
@@ -278,15 +278,15 @@ float ofxScrollView::scaleToZoom(float value) {
 }
 
 //--------------------------------------------------------------
-void ofxScrollView::zoomToMin(const ofVec2f & screenPoint, float timeSec) {
+void ScrollView::zoomToMin(const ofVec2f & screenPoint, float timeSec) {
     zoomTo(screenPoint, scaleMin, timeSec);
 }
 
-void ofxScrollView::zoomToMax(const ofVec2f & screenPoint, float timeSec) {
+void ScrollView::zoomToMax(const ofVec2f & screenPoint, float timeSec) {
     zoomTo(screenPoint, scaleMax, timeSec);
 }
 
-void ofxScrollView::zoomTo(const ofVec2f & screenPoint, float zoom, float timeSec) {
+void ScrollView::zoomTo(const ofVec2f & screenPoint, float zoom, float timeSec) {
     bool bAnimate = animStart(timeSec);
     
     scrollRectAnim0 = scrollRect;
@@ -299,7 +299,7 @@ void ofxScrollView::zoomTo(const ofVec2f & screenPoint, float zoom, float timeSe
     }
 }
 
-void ofxScrollView::zoomToContentPointAndPositionAtScreenPoint(const ofVec2f & contentPoint,
+void ScrollView::zoomToContentPointAndPositionAtScreenPoint(const ofVec2f & contentPoint,
                                                                const ofVec2f & screenPoint,
                                                                float zoom,
                                                                float timeSec) {
@@ -316,7 +316,7 @@ void ofxScrollView::zoomToContentPointAndPositionAtScreenPoint(const ofVec2f & c
     }
 }
 
-void ofxScrollView::moveContentPointToScreenPoint(const ofVec2f & contentPoint,
+void ScrollView::moveContentPointToScreenPoint(const ofVec2f & contentPoint,
                                                   const ofVec2f & screenPoint,
                                                   float timeSec) {
     bool bAnimate = animStart(timeSec);
@@ -331,7 +331,7 @@ void ofxScrollView::moveContentPointToScreenPoint(const ofVec2f & contentPoint,
 }
 
 
-bool ofxScrollView::animStart(float animTimeInSec) {
+bool ScrollView::animStart(float animTimeInSec) {
     bAnimating = true;
 
     animTimeStart = ofGetElapsedTimef();
@@ -346,7 +346,7 @@ bool ofxScrollView::animStart(float animTimeInSec) {
 }
 
 //--------------------------------------------------------------
-void ofxScrollView::setScrollPositionX(float x, bool bEase) {
+void ScrollView::setScrollPositionX(float x, bool bEase) {
     dragCancel();
     zoomCancel();
     
@@ -357,7 +357,7 @@ void ofxScrollView::setScrollPositionX(float x, bool bEase) {
     }
 }
 
-void ofxScrollView::setScrollPositionY(float y, bool bEase) {
+void ScrollView::setScrollPositionY(float y, bool bEase) {
     dragCancel();
     zoomCancel();
     
@@ -368,16 +368,16 @@ void ofxScrollView::setScrollPositionY(float y, bool bEase) {
     }
 }
 
-void ofxScrollView::setScrollPosition(float x, float y, bool bEase) {
+void ScrollView::setScrollPosition(float x, float y, bool bEase) {
     setScrollPositionX(x, bEase);
     setScrollPositionY(y, bEase);
 }
 
-ofVec2f ofxScrollView::getScrollPosition() {
+ofVec2f ScrollView::getScrollPosition() {
     return ofVec2f(scrollRectEased.x, scrollRectEased.y);
 }
 
-ofVec2f ofxScrollView::getScrollPositionNorm() {
+ofVec2f ScrollView::getScrollPositionNorm() {
     ofVec2f scrollPosEasedNorm;
     
     float dx = windowRect.width - scrollRect.width;
@@ -397,24 +397,24 @@ ofVec2f ofxScrollView::getScrollPositionNorm() {
 }
 
 //--------------------------------------------------------------
-const ofRectangle & ofxScrollView::getWindowRect() {
+const ofRectangle & ScrollView::getWindowRect() {
     return windowRect;
 }
 
-const ofRectangle & ofxScrollView::getContentRect() {
+const ofRectangle & ScrollView::getContentRect() {
     return contentRect;
 }
 
-const ofRectangle & ofxScrollView::getScrollRect() {
+const ofRectangle & ScrollView::getScrollRect() {
     return scrollRect;
 }
 
-const ofMatrix4x4 & ofxScrollView::getMatrix() {
+const ofMatrix4x4 & ScrollView::getMatrix() {
     return mat;
 }
 
 //--------------------------------------------------------------
-void ofxScrollView::update() {
+void ScrollView::update() {
     
     if(bAnimating == true) {
         
@@ -532,7 +532,7 @@ void ofxScrollView::update() {
 }
 
 //-------------------------------------------------------------- the brains!
-ofRectangle ofxScrollView::getRectContainedInWindowRect(const ofRectangle & rectToContain,
+ofRectangle ScrollView::getRectContainedInWindowRect(const ofRectangle & rectToContain,
                                                         float easing) {
 
     ofRectangle rect = rectToContain;
@@ -582,7 +582,7 @@ ofRectangle ofxScrollView::getRectContainedInWindowRect(const ofRectangle & rect
     return rect;
 }
 
-ofRectangle ofxScrollView::getRectZoomedAtScreenPoint(const ofRectangle & rect,
+ofRectangle ScrollView::getRectZoomedAtScreenPoint(const ofRectangle & rect,
                                                       const ofVec2f & screenPoint,
                                                       float zoom) {
     
@@ -608,7 +608,7 @@ ofRectangle ofxScrollView::getRectZoomedAtScreenPoint(const ofRectangle & rect,
     return rectNew;
 }
 
-ofRectangle ofxScrollView::getRectWithContentPointAtScreenPoint(const ofRectangle & rect,
+ofRectangle ScrollView::getRectWithContentPointAtScreenPoint(const ofRectangle & rect,
                                                                 const ofVec2f & contentPoint,
                                                                 const ofVec2f & screenPoint) {
     
@@ -623,7 +623,7 @@ ofRectangle ofxScrollView::getRectWithContentPointAtScreenPoint(const ofRectangl
     return rectNew;
 }
 
-ofRectangle ofxScrollView::getRectLerp(const ofRectangle & rectFrom,
+ofRectangle ScrollView::getRectLerp(const ofRectangle & rectFrom,
                                        const ofRectangle & rectTo,
                                        float progress) {
     
@@ -642,7 +642,7 @@ ofRectangle ofxScrollView::getRectLerp(const ofRectangle & rectFrom,
     return rect;
 }
 
-ofMatrix4x4 ofxScrollView::getMatrixForRect(const ofRectangle & rect) {
+ofMatrix4x4 ScrollView::getMatrixForRect(const ofRectangle & rect) {
     
     float rectScale = rect.width / contentRect.width;
     
@@ -653,7 +653,7 @@ ofMatrix4x4 ofxScrollView::getMatrixForRect(const ofRectangle & rect) {
     return rectMat;
 }
 
-ofVec2f ofxScrollView::getContentPointAtScreenPoint(const ofRectangle & rect,
+ofVec2f ScrollView::getContentPointAtScreenPoint(const ofRectangle & rect,
                                                     const ofVec2f & screenPoint) {
     
     ofVec2f contentPoint;
@@ -662,7 +662,7 @@ ofVec2f ofxScrollView::getContentPointAtScreenPoint(const ofRectangle & rect,
     return contentPoint;
 }
 
-ofVec2f ofxScrollView::getScreenPointAtContentPoint(const ofRectangle & rect,
+ofVec2f ScrollView::getScreenPointAtContentPoint(const ofRectangle & rect,
                                                     const ofVec2f & contentPoint) {
     
     ofVec2f screenPoint;
@@ -673,26 +673,26 @@ ofVec2f ofxScrollView::getScreenPointAtContentPoint(const ofRectangle & rect,
 
 
 //--------------------------------------------------------------
-void ofxScrollView::begin() {
+void ScrollView::begin() {
     ofPushMatrix();
     ofMultMatrix(mat);
 }
 
-void ofxScrollView::end() {
+void ScrollView::end() {
     ofPopMatrix();
 }
 
-void ofxScrollView::draw() {
+void ScrollView::draw() {
     //
 }
 
 //--------------------------------------------------------------
-void ofxScrollView::exit() {
+void ScrollView::exit() {
     //
 }
 
 //--------------------------------------------------------------
-void ofxScrollView::dragDown(const ofVec2f & point) {
+void ScrollView::dragDown(const ofVec2f & point) {
     dragDownPos = dragMovePos = dragMovePosPrev = point;
     dragVel.set(0);
     
@@ -700,24 +700,24 @@ void ofxScrollView::dragDown(const ofVec2f & point) {
     bAnimating = false;
 }
 
-void ofxScrollView::dragMoved(const ofVec2f & point) {
+void ScrollView::dragMoved(const ofVec2f & point) {
     dragMovePos = point;
 }
 
-void ofxScrollView::dragUp(const ofVec2f & point) {
+void ScrollView::dragUp(const ofVec2f & point) {
     dragMovePos = point;
     
     bDragging = false;
 }
 
-void ofxScrollView::dragCancel() {
+void ScrollView::dragCancel() {
     dragVel.set(0);
     
     bDragging = false;
 }
 
 //--------------------------------------------------------------
-void ofxScrollView::zoomDown(const ofVec2f & point, float pointDist) {
+void ScrollView::zoomDown(const ofVec2f & point, float pointDist) {
     if(bPinchZoomEnabled == false) {
         return;
     }
@@ -731,7 +731,7 @@ void ofxScrollView::zoomDown(const ofVec2f & point, float pointDist) {
     bAnimating = false;
 }
 
-void ofxScrollView::zoomMoved(const ofVec2f & point, float pointDist) {
+void ScrollView::zoomMoved(const ofVec2f & point, float pointDist) {
     if(bPinchZoomEnabled == false) {
         return;
     }
@@ -740,7 +740,7 @@ void ofxScrollView::zoomMoved(const ofVec2f & point, float pointDist) {
     zoomMoveDist = pointDist;
 }
 
-void ofxScrollView::zoomUp(const ofVec2f & point, float pointDist) {
+void ScrollView::zoomUp(const ofVec2f & point, float pointDist) {
     if(bPinchZoomEnabled == false) {
         return;
     }
@@ -751,16 +751,16 @@ void ofxScrollView::zoomUp(const ofVec2f & point, float pointDist) {
     bZooming = false;
 }
 
-void ofxScrollView::zoomCancel() {
+void ScrollView::zoomCancel() {
     bZooming = false;
 }
 
 //--------------------------------------------------------------
-void ofxScrollView::mouseMoved(int x, int y) {
+void ScrollView::mouseMoved(int x, int y) {
     //
 }
 
-void ofxScrollView::mousePressed(int x, int y, int button) {
+void ScrollView::mousePressed(int x, int y, int button) {
     if(button == 0) {
         
         touchDown(x, y, 0);
@@ -772,22 +772,22 @@ void ofxScrollView::mousePressed(int x, int y, int button) {
     }
 }
 
-void ofxScrollView::mouseDragged(int x, int y, int button) {
+void ScrollView::mouseDragged(int x, int y, int button) {
     touchMoved(x, y, button);
 }
 
-void ofxScrollView::mouseReleased(int x, int y, int button) {
+void ScrollView::mouseReleased(int x, int y, int button) {
     touchUp(x, y, button);
 }
 
 //--------------------------------------------------------------
-void ofxScrollView::touchDown(int x, int y, int id) {
+void ScrollView::touchDown(int x, int y, int id) {
     bool bHit = windowRect.inside(x, y);
     if(bHit == false) {
         return;
     }
 
-    ofxScrollViewTouchPoint touchPointNew;
+    ScrollViewTouchPoint touchPointNew;
     touchPointNew.touchPos.set(x, y);
     touchPointNew.touchID = id;
     touchPointNew.touchDownTimeInSec = ofGetElapsedTimef();
@@ -841,10 +841,10 @@ void ofxScrollView::touchDown(int x, int y, int id) {
     }
 }
 
-void ofxScrollView::touchMoved(int x, int y, int id) {
+void ScrollView::touchMoved(int x, int y, int id) {
     int touchIndex = -1;
     for(int i=0; i<touchPoints.size(); i++) {
-        ofxScrollViewTouchPoint & touchPoint = touchPoints[i];
+        ScrollViewTouchPoint & touchPoint = touchPoints[i];
         if(touchPoint.touchID == id) {
             touchPoint.touchPos.x = x;
             touchPoint.touchPos.y = y;
@@ -872,10 +872,10 @@ void ofxScrollView::touchMoved(int x, int y, int id) {
     }
 }
 
-void ofxScrollView::touchUp(int x, int y, int id) {
+void ScrollView::touchUp(int x, int y, int id) {
     int touchIndex = -1;
     for(int i=0; i<touchPoints.size(); i++) {
-        ofxScrollViewTouchPoint & touchPoint = touchPoints[i];
+        ScrollViewTouchPoint & touchPoint = touchPoints[i];
         if(touchPoint.touchID == id) {
             touchPoint.touchPos.x = x;
             touchPoint.touchPos.y = y;
@@ -905,7 +905,7 @@ void ofxScrollView::touchUp(int x, int y, int id) {
     touchPoints.clear();
 }
 
-void ofxScrollView::touchDoubleTap(int x, int y, int id) {
+void ScrollView::touchDoubleTap(int x, int y, int id) {
     if(bDoubleTapZoomEnabled == false) {
         return;
     }
@@ -934,6 +934,6 @@ void ofxScrollView::touchDoubleTap(int x, int y, int id) {
     zoomTo(touchPoint, zoomTarget, zoomTimeSec);
 }
 
-void ofxScrollView::touchCancelled(int x, int y, int id) {
+void ScrollView::touchCancelled(int x, int y, int id) {
     //
 }

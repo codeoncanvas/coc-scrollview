@@ -3,7 +3,7 @@
 #include "ofMain.h"
 #include "ofxiOS.h"
 #include "ofxiOSExtras.h"
-#include "ofxScrollView.h"
+#include "cocScrollView.h"
 #include "Grid.h"
 
 class ofApp : public ofxiOSApp{
@@ -28,7 +28,7 @@ public:
     
     ofRectangle windowRect;
     ofRectangle contentRect;
-    ofxScrollView scrollView;
+    ScrollView scrollView;
     
     Grid grid;
     ofTexture image;

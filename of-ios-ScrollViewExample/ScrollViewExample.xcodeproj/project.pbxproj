@@ -13,8 +13,8 @@
 		5326AEA810A23A0500278DE6 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5326AEA710A23A0500278DE6 /* CoreLocation.framework */; };
 		53F323EB10A20EDB00E0DAE4 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */; };
 		677B312617D80941002E90B2 /* ofApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 677B312517D80941002E90B2 /* ofApp.mm */; };
-		67B5F72F1C51A4D90046F209 /* ofxScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67B5F72D1C51A4D90046F209 /* ofxScrollView.cpp */; };
 		67EDDB29197CC8E800CFCD8B /* Grid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67EDDB27197CC8E800CFCD8B /* Grid.cpp */; };
+		67FC7AD81C51A99400D45BF9 /* cocScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67FC7AD61C51A99400D45BF9 /* cocScrollView.cpp */; };
 		BB16EBD20F2B2A9500518274 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD10F2B2A9500518274 /* OpenGLES.framework */; };
 		BB16EBD90F2B2AB500518274 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
 		BBE5EAB80F49AD8400F28951 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */; };
@@ -53,10 +53,12 @@
 		53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		677B312417D80941002E90B2 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofApp.h; sourceTree = "<group>"; };
 		677B312517D80941002E90B2 /* ofApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofApp.mm; sourceTree = "<group>"; };
-		67B5F72D1C51A4D90046F209 /* ofxScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxScrollView.cpp; sourceTree = "<group>"; };
-		67B5F72E1C51A4D90046F209 /* ofxScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxScrollView.h; sourceTree = "<group>"; };
 		67EDDB27197CC8E800CFCD8B /* Grid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Grid.cpp; sourceTree = "<group>"; };
 		67EDDB28197CC8E800CFCD8B /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Grid.h; sourceTree = "<group>"; };
+		67FC7AD61C51A99400D45BF9 /* cocScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cocScrollView.cpp; sourceTree = "<group>"; };
+		67FC7AD71C51A99400D45BF9 /* cocScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocScrollView.h; sourceTree = "<group>"; };
+		67FC7ADD1C51A9D300D45BF9 /* cocCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocCore.h; sourceTree = "<group>"; };
+		67FC7AE01C51A9F300D45BF9 /* cocGlm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocGlm.h; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		BB24DDC910DA781C00E9C588 /* ofxiOS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ofxiOS-Info.plist"; sourceTree = "<group>"; };
@@ -148,8 +150,42 @@
 		67B5F72C1C51A4CB0046F209 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				67B5F72E1C51A4D90046F209 /* ofxScrollView.h */,
-				67B5F72D1C51A4D90046F209 /* ofxScrollView.cpp */,
+				67FC7AD71C51A99400D45BF9 /* cocScrollView.h */,
+				67FC7AD61C51A99400D45BF9 /* cocScrollView.cpp */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		67FC7AD91C51A9B100D45BF9 /* coc-core */ = {
+			isa = PBXGroup;
+			children = (
+				67FC7ADC1C51A9C800D45BF9 /* src */,
+			);
+			name = "coc-core";
+			path = "../../coc-core";
+			sourceTree = "<group>";
+		};
+		67FC7ADC1C51A9C800D45BF9 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				67FC7ADD1C51A9D300D45BF9 /* cocCore.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		67FC7ADE1C51A9D600D45BF9 /* coc-glm */ = {
+			isa = PBXGroup;
+			children = (
+				67FC7ADF1C51A9E600D45BF9 /* src */,
+			);
+			name = "coc-glm";
+			path = "../../coc-glm";
+			sourceTree = "<group>";
+		};
+		67FC7ADF1C51A9E600D45BF9 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				67FC7AE01C51A9F300D45BF9 /* cocGlm.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -165,6 +201,8 @@
 		BB16F26B0F2B646B00518274 /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				67FC7ADE1C51A9D600D45BF9 /* coc-glm */,
+				67FC7AD91C51A9B100D45BF9 /* coc-core */,
 				67B5F7221C51A4660046F209 /* coc-scrollview */,
 			);
 			name = addons;
@@ -307,7 +345,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4D8936E11527B74007E1F53 /* main.mm in Sources */,
-				67B5F72F1C51A4D90046F209 /* ofxScrollView.cpp in Sources */,
+				67FC7AD81C51A99400D45BF9 /* cocScrollView.cpp in Sources */,
 				677B312617D80941002E90B2 /* ofApp.mm in Sources */,
 				67EDDB29197CC8E800CFCD8B /* Grid.cpp in Sources */,
 			);
@@ -330,6 +368,11 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ofxiOS_Prefix.pch;
+				HEADER_SEARCH_PATHS = (
+					"$(OF_CORE_HEADERS)",
+					src,
+					"../../../addons/coc-glm/libs",
+				);
 				INFOPLIST_FILE = "ofxiOS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = NO;
@@ -345,6 +388,11 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ofxiOS_Prefix.pch;
+				HEADER_SEARCH_PATHS = (
+					"$(OF_CORE_HEADERS)",
+					src,
+					"../../../addons/coc-glm/libs",
+				);
 				INFOPLIST_FILE = "ofxiOS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "${PRODUCT_NAME:identifier}";

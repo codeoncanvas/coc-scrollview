@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		673A0F761C51A74A007715B7 /* ofxScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 673A0F741C51A74A007715B7 /* ofxScrollView.cpp */; };
+		673A0F761C51A74A007715B7 /* cocScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 673A0F741C51A74A007715B7 /* cocScrollView.cpp */; };
 		673A0F791C51A770007715B7 /* Grid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 673A0F771C51A770007715B7 /* Grid.cpp */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */; };
@@ -44,8 +44,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		673A0F741C51A74A007715B7 /* ofxScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxScrollView.cpp; sourceTree = "<group>"; };
-		673A0F751C51A74A007715B7 /* ofxScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxScrollView.h; sourceTree = "<group>"; };
+		673A0F741C51A74A007715B7 /* cocScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cocScrollView.cpp; sourceTree = "<group>"; };
+		673A0F751C51A74A007715B7 /* cocScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocScrollView.h; sourceTree = "<group>"; };
 		673A0F771C51A770007715B7 /* Grid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Grid.cpp; sourceTree = "<group>"; };
 		673A0F781C51A770007715B7 /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Grid.h; sourceTree = "<group>"; };
 		67739D5B1C50A61D00761B58 /* cocGlm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocGlm.h; sourceTree = "<group>"; };
@@ -84,8 +84,8 @@
 		673A0F731C51A739007715B7 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				673A0F751C51A74A007715B7 /* ofxScrollView.h */,
-				673A0F741C51A74A007715B7 /* ofxScrollView.cpp */,
+				673A0F751C51A74A007715B7 /* cocScrollView.h */,
+				673A0F741C51A74A007715B7 /* cocScrollView.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -264,7 +264,7 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
-				673A0F761C51A74A007715B7 /* ofxScrollView.cpp in Sources */,
+				673A0F761C51A74A007715B7 /* cocScrollView.cpp in Sources */,
 				673A0F791C51A770007715B7 /* Grid.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

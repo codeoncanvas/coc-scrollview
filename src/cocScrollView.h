@@ -1,17 +1,18 @@
 //
-//  ofxScrollView.h
+//  ScrollView.h
 //  Created by Lukasz Karluk on 2/06/2014.
-//  http://julapy.com/
+//  http://codeoncanvas.cc
 //
 
 #pragma once
 
+#include "cocCore.h"
 #include "ofMain.h"
 
 //--------------------------------------------------------------
-class ofxScrollViewTouchPoint {
+class ScrollViewTouchPoint {
 public:
-    ofxScrollViewTouchPoint() {
+    ScrollViewTouchPoint() {
         touchID = 0;
         touchDownTimeInSec = 0;
     }
@@ -21,12 +22,12 @@ public:
 };
 
 //--------------------------------------------------------------
-class ofxScrollView {
+class ScrollView {
     
 public:
     
-    ofxScrollView();
-    ~ofxScrollView();
+    ScrollView();
+    ~ScrollView();
     
     void setUserInteraction(bool bEnable);
     void setPinchZoom(bool bEnable);
@@ -179,8 +180,8 @@ public:
     float scaleMax;
     ofMatrix4x4 mat;
     
-    vector<ofxScrollViewTouchPoint> touchPoints;
-    ofxScrollViewTouchPoint touchDownPointLast;
+    vector<ScrollViewTouchPoint> touchPoints;
+    ScrollViewTouchPoint touchDownPointLast;
     
     //----------------------------------------------------------
     virtual void mouseMoved(ofMouseEventArgs & mouse){
