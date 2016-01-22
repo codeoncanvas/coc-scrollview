@@ -151,15 +151,15 @@ void ScrollView::setup() {
 void ScrollView::reset() {
     touchPoints.clear();
     
-    dragDownPos.set(0);
-    dragMovePos.set(0);
-    dragMovePosPrev.set(0);
-    dragVel.set(0);
+    dragDownPos = glm::vec2(0, 0);
+    dragMovePos = glm::vec2(0, 0);
+    dragMovePosPrev = glm::vec2(0, 0);
+    dragVel = glm::vec2(0, 0);
     bDragging = false;
     
-    zoomDownPos.set(0);
-    zoomMovePos.set(0);
-    zoomMovePosPrev.set(0);
+    zoomDownPos = glm::vec2(0, 0);
+    zoomMovePos = glm::vec2(0, 0);
+    zoomMovePosPrev = glm::vec2(0, 0);
     bZooming = false;
     
     animTimeStart = 0.0;
@@ -280,15 +280,15 @@ float ScrollView::scaleToZoom(float value) {
 }
 
 //--------------------------------------------------------------
-void ScrollView::zoomToMin(const ofVec2f & screenPoint, float timeSec) {
+void ScrollView::zoomToMin(const glm::vec2 & screenPoint, float timeSec) {
     zoomTo(screenPoint, scaleMin, timeSec);
 }
 
-void ScrollView::zoomToMax(const ofVec2f & screenPoint, float timeSec) {
+void ScrollView::zoomToMax(const glm::vec2 & screenPoint, float timeSec) {
     zoomTo(screenPoint, scaleMax, timeSec);
 }
 
-void ScrollView::zoomTo(const ofVec2f & screenPoint, float zoom, float timeSec) {
+void ScrollView::zoomTo(const glm::vec2 & screenPoint, float zoom, float timeSec) {
     bool bAnimate = animStart(timeSec);
     
     scrollRectAnim0 = scrollRect;
@@ -301,8 +301,8 @@ void ScrollView::zoomTo(const ofVec2f & screenPoint, float zoom, float timeSec) 
     }
 }
 
-void ScrollView::zoomToContentPointAndPositionAtScreenPoint(const ofVec2f & contentPoint,
-                                                               const ofVec2f & screenPoint,
+void ScrollView::zoomToContentPointAndPositionAtScreenPoint(const glm::vec2 & contentPoint,
+                                                               const glm::vec2 & screenPoint,
                                                                float zoom,
                                                                float timeSec) {
     bool bAnimate = animStart(timeSec);
@@ -318,8 +318,8 @@ void ScrollView::zoomToContentPointAndPositionAtScreenPoint(const ofVec2f & cont
     }
 }
 
-void ScrollView::moveContentPointToScreenPoint(const ofVec2f & contentPoint,
-                                                  const ofVec2f & screenPoint,
+void ScrollView::moveContentPointToScreenPoint(const glm::vec2 & contentPoint,
+                                                  const glm::vec2 & screenPoint,
                                                   float timeSec) {
     bool bAnimate = animStart(timeSec);
 
@@ -375,12 +375,12 @@ void ScrollView::setScrollPosition(float x, float y, bool bEase) {
     setScrollPositionY(y, bEase);
 }
 
-ofVec2f ScrollView::getScrollPosition() {
-    return ofVec2f(scrollRectEased.x, scrollRectEased.y);
+glm::vec2 ScrollView::getScrollPosition() {
+    return glm::vec2(scrollRectEased.x, scrollRectEased.y);
 }
 
-ofVec2f ScrollView::getScrollPositionNorm() {
-    ofVec2f scrollPosEasedNorm;
+glm::vec2 ScrollView::getScrollPositionNorm() {
+    glm::vec2 scrollPosEasedNorm;
     
     float dx = windowRect.width - scrollRect.width;
     float dy = windowRect.height - scrollRect.height;
@@ -475,7 +475,7 @@ void ScrollView::update() {
         
         if(bZooming == true) {
             
-            float zoomUnitDist = ofVec2f(windowRect.width, windowRect.height).length(); // diagonal.
+            float zoomUnitDist = glm::vec2(windowRect.width, windowRect.height).length(); // diagonal.
             float zoomRange = scaleMax - scaleMin;
             float zoomDiff = 0;
             
@@ -585,15 +585,15 @@ coc::Rect ScrollView::getRectContainedInWindowRect(const coc::Rect & rectToConta
 }
 
 coc::Rect ScrollView::getRectZoomedAtScreenPoint(const coc::Rect & rect,
-                                                      const ofVec2f & screenPoint,
+                                                      const glm::vec2 & screenPoint,
                                                       float zoom) {
     
     float zoomScale = zoomToScale(zoom);
     
-    ofVec2f contentPoint = getContentPointAtScreenPoint(rect, screenPoint);
+    glm::vec2 contentPoint = getContentPointAtScreenPoint(rect, screenPoint);
     
-    ofVec2f p0(0, 0);
-    ofVec2f p1(contentRect.width, contentRect.height);
+    glm::vec2 p0(0, 0);
+    glm::vec2 p1(contentRect.width, contentRect.height);
     p0 -= contentPoint;
     p1 -= contentPoint;
     p0 *= zoomScale;
@@ -611,11 +611,11 @@ coc::Rect ScrollView::getRectZoomedAtScreenPoint(const coc::Rect & rect,
 }
 
 coc::Rect ScrollView::getRectWithContentPointAtScreenPoint(const coc::Rect & rect,
-                                                                const ofVec2f & contentPoint,
-                                                                const ofVec2f & screenPoint) {
+                                                                const glm::vec2 & contentPoint,
+                                                                const glm::vec2 & screenPoint) {
     
-    ofVec2f contentScreenPoint = getScreenPointAtContentPoint(rect, contentPoint);
-    ofVec2f contentPointToScreenPointDifference = screenPoint - contentScreenPoint;
+    glm::vec2 contentScreenPoint = getScreenPointAtContentPoint(rect, contentPoint);
+    glm::vec2 contentPointToScreenPointDifference = screenPoint - contentScreenPoint;
     
     coc::Rect rectNew;
     rectNew = scrollRect;
@@ -655,19 +655,19 @@ ofMatrix4x4 ScrollView::getMatrixForRect(const coc::Rect & rect) {
     return rectMat;
 }
 
-ofVec2f ScrollView::getContentPointAtScreenPoint(const coc::Rect & rect,
-                                                    const ofVec2f & screenPoint) {
+glm::vec2 ScrollView::getContentPointAtScreenPoint(const coc::Rect & rect,
+                                                    const glm::vec2 & screenPoint) {
     
-    ofVec2f contentPoint;
+    glm::vec2 contentPoint;
     contentPoint.x = ofMap(screenPoint.x, rect.x, rect.x + rect.width, 0, contentRect.width, true);
     contentPoint.y = ofMap(screenPoint.y, rect.y, rect.y + rect.height, 0, contentRect.height, true);
     return contentPoint;
 }
 
-ofVec2f ScrollView::getScreenPointAtContentPoint(const coc::Rect & rect,
-                                                    const ofVec2f & contentPoint) {
+glm::vec2 ScrollView::getScreenPointAtContentPoint(const coc::Rect & rect,
+                                                    const glm::vec2 & contentPoint) {
     
-    ofVec2f screenPoint;
+    glm::vec2 screenPoint;
     screenPoint.x = ofMap(contentPoint.x, 0, contentRect.width, rect.x, rect.x + rect.width, true);
     screenPoint.y = ofMap(contentPoint.y, 0, contentRect.height, rect.y, rect.y + rect.height, true);
     return screenPoint;
@@ -694,32 +694,32 @@ void ScrollView::exit() {
 }
 
 //--------------------------------------------------------------
-void ScrollView::dragDown(const ofVec2f & point) {
+void ScrollView::dragDown(const glm::vec2 & point) {
     dragDownPos = dragMovePos = dragMovePosPrev = point;
-    dragVel.set(0);
+    dragVel = glm::vec2(0, 0);
     
     bDragging = true;
     bAnimating = false;
 }
 
-void ScrollView::dragMoved(const ofVec2f & point) {
+void ScrollView::dragMoved(const glm::vec2 & point) {
     dragMovePos = point;
 }
 
-void ScrollView::dragUp(const ofVec2f & point) {
+void ScrollView::dragUp(const glm::vec2 & point) {
     dragMovePos = point;
     
     bDragging = false;
 }
 
 void ScrollView::dragCancel() {
-    dragVel.set(0);
+    dragVel = glm::vec2(0, 0);
     
     bDragging = false;
 }
 
 //--------------------------------------------------------------
-void ScrollView::zoomDown(const ofVec2f & point, float pointDist) {
+void ScrollView::zoomDown(const glm::vec2 & point, float pointDist) {
     if(bPinchZoomEnabled == false) {
         return;
     }
@@ -733,7 +733,7 @@ void ScrollView::zoomDown(const ofVec2f & point, float pointDist) {
     bAnimating = false;
 }
 
-void ScrollView::zoomMoved(const ofVec2f & point, float pointDist) {
+void ScrollView::zoomMoved(const glm::vec2 & point, float pointDist) {
     if(bPinchZoomEnabled == false) {
         return;
     }
@@ -742,7 +742,7 @@ void ScrollView::zoomMoved(const ofVec2f & point, float pointDist) {
     zoomMoveDist = pointDist;
 }
 
-void ScrollView::zoomUp(const ofVec2f & point, float pointDist) {
+void ScrollView::zoomUp(const glm::vec2 & point, float pointDist) {
     if(bPinchZoomEnabled == false) {
         return;
     }
@@ -790,12 +790,12 @@ void ScrollView::touchDown(int x, int y, int id) {
     }
 
     ScrollViewTouchPoint touchPointNew;
-    touchPointNew.touchPos.set(x, y);
+    touchPointNew.touchPos = glm::vec2(x, y);
     touchPointNew.touchID = id;
     touchPointNew.touchDownTimeInSec = ofGetElapsedTimef();
     
     //---------------------------------------------------------- double tap.
-    ofVec2f touchPointDiff = touchPointNew.touchPos - touchDownPointLast.touchPos;
+    glm::vec2 touchPointDiff = touchPointNew.touchPos - touchDownPointLast.touchPos;
     float touchTimeDiff = touchPointNew.touchDownTimeInSec - touchDownPointLast.touchDownTimeInSec;
     
     touchDownPointLast = touchPointNew;
@@ -811,7 +811,7 @@ void ScrollView::touchDown(int x, int y, int id) {
         zoomCancel();
 
         touchPoints.clear();
-        touchDownPointLast.touchPos.set(0, 0);
+        touchDownPointLast.touchPos = glm::vec2(0, 0);
         touchDownPointLast.touchDownTimeInSec = 0.0;
         
         touchDoubleTap(x, y, id);
@@ -833,9 +833,9 @@ void ScrollView::touchDown(int x, int y, int id) {
         
     } else if(touchPoints.size() == 2) {
         
-        ofVec2f tp0(touchPoints[0].touchPos);
-        ofVec2f tp1(touchPoints[1].touchPos);
-        ofVec2f tmp = (tp1 - tp0) * 0.5 + tp0;
+        glm::vec2 tp0(touchPoints[0].touchPos);
+        glm::vec2 tp1(touchPoints[1].touchPos);
+        glm::vec2 tmp = (tp1 - tp0) * glm::vec2(0.5, 0.5) + tp0;
         float dist = (tp1 - tp0).length();
         
         dragCancel();
@@ -865,9 +865,9 @@ void ScrollView::touchMoved(int x, int y, int id) {
         
     } else if(touchPoints.size() == 2) {
         
-        ofVec2f tp0(touchPoints[0].touchPos);
-        ofVec2f tp1(touchPoints[1].touchPos);
-        ofVec2f tmp = (tp1 - tp0) * 0.5 + tp0;
+        glm::vec2 tp0(touchPoints[0].touchPos);
+        glm::vec2 tp1(touchPoints[1].touchPos);
+        glm::vec2 tmp = (tp1 - tp0) * glm::vec2(0.5, 0.5) + tp0;
         float dist = (tp1 - tp0).length();
         
         zoomMoved(tmp, dist);
@@ -896,9 +896,9 @@ void ScrollView::touchUp(int x, int y, int id) {
         
     } else if(touchPoints.size() == 2) {
      
-        ofVec2f tp0(touchPoints[0].touchPos);
-        ofVec2f tp1(touchPoints[1].touchPos);
-        ofVec2f tmp = (tp1 - tp0) * 0.5 + tp0;
+        glm::vec2 tp0(touchPoints[0].touchPos);
+        glm::vec2 tp1(touchPoints[1].touchPos);
+        glm::vec2 tmp = (tp1 - tp0) * glm::vec2(0.5, 0.5) + tp0;
         float dist = (tp1 - tp0).length();
         
         zoomUp(tmp, dist);
@@ -917,7 +917,7 @@ void ScrollView::touchDoubleTap(int x, int y, int id) {
         return;
     }
     
-    ofVec2f touchPoint(x, y);
+    glm::vec2 touchPoint(x, y);
     
     float zoomCurrent = getZoom();
     float zoomTarget = 0.0;

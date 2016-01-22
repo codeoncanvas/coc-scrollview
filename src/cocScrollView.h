@@ -17,7 +17,7 @@ public:
         touchDownTimeInSec = 0;
     }
     int touchID;
-    ofVec2f touchPos;
+    glm::vec2 touchPos;
     float touchDownTimeInSec;
 };
 
@@ -67,15 +67,15 @@ public:
     float zoomToScale(float value);
     float scaleToZoom(float value);
 
-    void zoomToMin(const ofVec2f & screenPoint, float timeSec=0.0);
-    void zoomToMax(const ofVec2f & screenPoint, float timeSec=0.0);
-    void zoomTo(const ofVec2f & screenPoint, float zoom, float timeSec=0.0);
-    void zoomToContentPointAndPositionAtScreenPoint(const ofVec2f & contentPoint,
-                                                    const ofVec2f & screenPoint,
+    void zoomToMin(const glm::vec2 & screenPoint, float timeSec=0.0);
+    void zoomToMax(const glm::vec2 & screenPoint, float timeSec=0.0);
+    void zoomTo(const glm::vec2 & screenPoint, float zoom, float timeSec=0.0);
+    void zoomToContentPointAndPositionAtScreenPoint(const glm::vec2 & contentPoint,
+                                                    const glm::vec2 & screenPoint,
                                                     float zoom,
                                                     float timeSec=0.0);
-    void moveContentPointToScreenPoint(const ofVec2f & contentPoint,
-                                       const ofVec2f & screenPoint,
+    void moveContentPointToScreenPoint(const glm::vec2 & contentPoint,
+                                       const glm::vec2 & screenPoint,
                                        float timeSec=0.0);
     bool animStart(float animTimeInSec);
     
@@ -83,8 +83,8 @@ public:
     void setScrollPositionY(float y, bool bEase=true);
     void setScrollPosition(float x, float y, bool bEase=true);
     
-    ofVec2f getScrollPosition();
-    ofVec2f getScrollPositionNorm();
+    glm::vec2 getScrollPosition();
+    glm::vec2 getScrollPositionNorm();
     
     const coc::Rect & getWindowRect();
     const coc::Rect & getContentRect();
@@ -98,12 +98,12 @@ public:
                                              float easing=1.0);
     
     coc::Rect getRectZoomedAtScreenPoint(const coc::Rect & rect,
-                                           const ofVec2f & screenPoint,
+                                           const glm::vec2 & screenPoint,
                                            float zoom=0.0);
     
     coc::Rect getRectWithContentPointAtScreenPoint(const coc::Rect & rect,
-                                                     const ofVec2f & contentPoint,
-                                                     const ofVec2f & screenPoint);
+                                                     const glm::vec2 & contentPoint,
+                                                     const glm::vec2 & screenPoint);
     
     coc::Rect getRectLerp(const coc::Rect & rectFrom,
                             const coc::Rect & rectTo,
@@ -111,11 +111,11 @@ public:
     
     ofMatrix4x4 getMatrixForRect(const coc::Rect & rect);
     
-    ofVec2f getContentPointAtScreenPoint(const coc::Rect & rect,
-                                         const ofVec2f & screenPoint);
+    glm::vec2 getContentPointAtScreenPoint(const coc::Rect & rect,
+                                         const glm::vec2 & screenPoint);
     
-    ofVec2f getScreenPointAtContentPoint(const coc::Rect & rect,
-                                         const ofVec2f & contentPoint);
+    glm::vec2 getScreenPointAtContentPoint(const coc::Rect & rect,
+                                         const glm::vec2 & contentPoint);
 
     //--------------------------------------------------------------
     virtual void begin();
@@ -124,14 +124,14 @@ public:
     
     virtual void exit();
     
-    virtual void dragDown(const ofVec2f & point);
-    virtual void dragMoved(const ofVec2f & point);
-    virtual void dragUp(const ofVec2f & point);
+    virtual void dragDown(const glm::vec2 & point);
+    virtual void dragMoved(const glm::vec2 & point);
+    virtual void dragUp(const glm::vec2 & point);
     virtual void dragCancel();
     
-    virtual void zoomDown(const ofVec2f & point, float pointDist);
-    virtual void zoomMoved(const ofVec2f & point, float pointDist);
-    virtual void zoomUp(const ofVec2f & point, float pointDist);
+    virtual void zoomDown(const glm::vec2 & point, float pointDist);
+    virtual void zoomMoved(const glm::vec2 & point, float pointDist);
+    virtual void zoomUp(const glm::vec2 & point, float pointDist);
     virtual void zoomCancel();
     
     coc::Rect windowRect;
@@ -148,16 +148,16 @@ public:
     float scrollEasing;
     float bounceBack;
     
-    ofVec2f dragDownPos;
-    ofVec2f dragMovePos;
-    ofVec2f dragMovePosPrev;
-    ofVec2f dragVel;
+    glm::vec2 dragDownPos;
+    glm::vec2 dragMovePos;
+    glm::vec2 dragMovePosPrev;
+    glm::vec2 dragVel;
     float dragVelDecay;
     bool bDragging;
     
-    ofVec2f zoomDownPos;
-    ofVec2f zoomMovePos;
-    ofVec2f zoomMovePosPrev;
+    glm::vec2 zoomDownPos;
+    glm::vec2 zoomMovePos;
+    glm::vec2 zoomMovePosPrev;
     float zoomDownDist;
     float zoomMoveDist;
     bool bZooming;
