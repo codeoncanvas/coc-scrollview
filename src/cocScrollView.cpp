@@ -64,6 +64,8 @@ void ScrollView::setUserInteraction(bool bEnable) {
     if(bUserInteractionEnabled == true) {
         bUserInteractionEnabled = false;
         
+#if defined( COC_OF )
+        
 #ifdef TARGET_OPENGLES
         ofRemoveListener(ofEvents().touchDown, this, &ScrollView::touchDown);
         ofRemoveListener(ofEvents().touchMoved, this, &ScrollView::touchMoved);
@@ -73,9 +75,13 @@ void ScrollView::setUserInteraction(bool bEnable) {
         ofRemoveListener(ofEvents().mouseDragged, this, &ScrollView::mouseDragged);
         ofRemoveListener(ofEvents().mouseReleased, this, &ScrollView::mouseReleased);
 #endif
+
+#endif
         
     } else {
         bUserInteractionEnabled = true;
+        
+#if defined( COC_OF )
         
 #ifdef TARGET_OPENGLES
         ofAddListener(ofEvents().touchDown, this, &ScrollView::touchDown);
@@ -85,6 +91,8 @@ void ScrollView::setUserInteraction(bool bEnable) {
         ofAddListener(ofEvents().mousePressed, this, &ScrollView::mousePressed);
         ofAddListener(ofEvents().mouseDragged, this, &ScrollView::mouseDragged);
         ofAddListener(ofEvents().mouseReleased, this, &ScrollView::mouseReleased);
+#endif
+
 #endif
     }
 }
@@ -136,8 +144,14 @@ void ScrollView::setDoubleTapRegistrationDistanceInPixels(float value) {
 //--------------------------------------------------------------
 void ScrollView::setup() {
     if(windowRect.isEmpty() == true) {
+    
+        // TODO: show error message + instruct on how to fix.
+        // TODO: default window size should be based actual window dimensions.
+        
+        int windowSizeDefault = 512;
+    
         coc::Rect rect;
-        rect.set(0, 0, ofGetWidth(), ofGetHeight());
+        rect.set(0, 0, windowSizeDefault, windowSizeDefault);
         setWindowRect(rect);
     }
     
@@ -336,7 +350,7 @@ void ScrollView::moveContentPointToScreenPoint(const glm::vec2 & contentPoint,
 bool ScrollView::animStart(float animTimeInSec) {
     bAnimating = true;
 
-    animTimeStart = ofGetElapsedTimef();
+    animTimeStart = coc::getTimeElapsed();
     animTimeTotal = MAX(animTimeInSec, 0.0);
     
     if(animTimeTotal < 0.001) {
@@ -411,8 +425,12 @@ const coc::Rect & ScrollView::getScrollRect() {
     return scrollRect;
 }
 
-const ofMatrix4x4 & ScrollView::getMatrix() {
+const glm::mat4x4 & ScrollView::getMatrix() {
     return mat;
+}
+
+const float * ScrollView::getMatrixPtr() {
+    return &mat[0][0];
 }
 
 //--------------------------------------------------------------
@@ -420,7 +438,7 @@ void ScrollView::update() {
     
     if(bAnimating == true) {
         
-        float timeNow = ofGetElapsedTimef();
+        float timeNow = coc::getTimeElapsed();
         float progress = ofMap(timeNow, animTimeStart, animTimeStart + animTimeTotal, 0.0, 1.0, true);
         bAnimating = (progress < 1.0);
         
@@ -644,13 +662,13 @@ coc::Rect ScrollView::getRectLerp(const coc::Rect & rectFrom,
     return rect;
 }
 
-ofMatrix4x4 ScrollView::getMatrixForRect(const coc::Rect & rect) {
+glm::mat4x4 ScrollView::getMatrixForRect(const coc::Rect & rect) {
     
     float rectScale = rect.width / contentRect.width;
     
-    ofMatrix4x4 rectMat;
-    rectMat.preMultTranslate(ofVec3f(rect.x, rect.y, 0.0));
-    rectMat.preMultScale(ofVec3f(rectScale, rectScale, 1.0));
+    glm::mat4x4 rectMat;
+    rectMat = glm::translate(rectMat, glm::vec3(rect.x, rect.y, 0.0));
+    rectMat = glm::scale(rectMat, glm::vec3(rectScale, rectScale, 1.0));
     
     return rectMat;
 }
@@ -671,26 +689,6 @@ glm::vec2 ScrollView::getScreenPointAtContentPoint(const coc::Rect & rect,
     screenPoint.x = ofMap(contentPoint.x, 0, contentRect.width, rect.x, rect.x + rect.width, true);
     screenPoint.y = ofMap(contentPoint.y, 0, contentRect.height, rect.y, rect.y + rect.height, true);
     return screenPoint;
-}
-
-
-//--------------------------------------------------------------
-void ScrollView::begin() {
-    ofPushMatrix();
-    ofMultMatrix(mat);
-}
-
-void ScrollView::end() {
-    ofPopMatrix();
-}
-
-void ScrollView::draw() {
-    //
-}
-
-//--------------------------------------------------------------
-void ScrollView::exit() {
-    //
 }
 
 //--------------------------------------------------------------
@@ -792,7 +790,7 @@ void ScrollView::touchDown(int x, int y, int id) {
     ScrollViewTouchPoint touchPointNew;
     touchPointNew.touchPos = glm::vec2(x, y);
     touchPointNew.touchID = id;
-    touchPointNew.touchDownTimeInSec = ofGetElapsedTimef();
+    touchPointNew.touchDownTimeInSec = coc::getTimeElapsed();
     
     //---------------------------------------------------------- double tap.
     glm::vec2 touchPointDiff = touchPointNew.touchPos - touchDownPointLast.touchPos;

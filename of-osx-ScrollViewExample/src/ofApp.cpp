@@ -51,14 +51,14 @@ void ofApp::draw(){
     // ofxScrollView returns a matrix to do any transformations manually,
     // otherwise drawing things between begin() and end() methods will also do the trick.
     
-    ofMatrix4x4 mat;
-    mat = scrollView.getMatrix();
+    ofMatrix4x4 mat(scrollView.getMatrixPtr());
     
-    scrollView.begin();
+    ofPushMatrix();
+    ofMultMatrix(mat);
     
     grid.draw();
     
-    scrollView.end();
+    ofPopMatrix();
     
     ofSetColor(0);
     ofBeginShape();
@@ -76,8 +76,6 @@ void ofApp::draw(){
     ofNoFill();
     ofDrawRectangle(windowRect);
     ofFill();
-    
-    scrollView.draw();
 }
 
 //--------------------------------------------------------------

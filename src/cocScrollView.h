@@ -7,7 +7,10 @@
 #pragma once
 
 #include "cocCore.h"
-#include "ofMain.h"
+
+#if defined( COC_OF )
+#include "ofEvents.h"
+#endif
 
 //--------------------------------------------------------------
 class ScrollViewTouchPoint {
@@ -89,7 +92,8 @@ public:
     const coc::Rect & getWindowRect();
     const coc::Rect & getContentRect();
     const coc::Rect & getScrollRect();
-    const ofMatrix4x4 & getMatrix();
+    const glm::mat4x4 & getMatrix();
+    const float * getMatrixPtr();
     
     virtual void update();
 
@@ -109,7 +113,7 @@ public:
                             const coc::Rect & rectTo,
                             float progress);
     
-    ofMatrix4x4 getMatrixForRect(const coc::Rect & rect);
+    glm::mat4x4 getMatrixForRect(const coc::Rect & rect);
     
     glm::vec2 getContentPointAtScreenPoint(const coc::Rect & rect,
                                          const glm::vec2 & screenPoint);
@@ -118,12 +122,7 @@ public:
                                          const glm::vec2 & contentPoint);
 
     //--------------------------------------------------------------
-    virtual void begin();
-    virtual void end();
-    virtual void draw();
-    
-    virtual void exit();
-    
+
     virtual void dragDown(const glm::vec2 & point);
     virtual void dragMoved(const glm::vec2 & point);
     virtual void dragUp(const glm::vec2 & point);
@@ -178,12 +177,30 @@ public:
     float scaleDown;
     float scaleMin;
     float scaleMax;
-    ofMatrix4x4 mat;
+    glm::mat4x4 mat;
     
     vector<ScrollViewTouchPoint> touchPoints;
     ScrollViewTouchPoint touchDownPointLast;
     
     //----------------------------------------------------------
+    
+    virtual void mouseMoved(int x, int y);
+    virtual void mouseDragged(int x, int y, int button);
+    virtual void mousePressed(int x, int y, int button);
+    virtual void mouseReleased(int x, int y, int button);
+    
+    //----------------------------------------------------------
+    
+    virtual void touchDown(int x, int y, int id);
+    virtual void touchMoved(int x, int y, int id);
+    virtual void touchUp(int x, int y, int id);
+    virtual void touchDoubleTap(int x, int y, int id);
+    virtual void touchCancelled(int x, int y, int id);
+    
+    //----------------------------------------------------------
+    
+#if defined( COC_OF )
+
     virtual void mouseMoved(ofMouseEventArgs & mouse){
         mouseMoved(mouse.x,mouse.y);
     }
@@ -197,12 +214,8 @@ public:
         mouseReleased(mouse.x,mouse.y,mouse.button);
     }
     
-    virtual void mouseMoved(int x, int y);
-    virtual void mouseDragged(int x, int y, int button);
-    virtual void mousePressed(int x, int y, int button);
-    virtual void mouseReleased(int x, int y, int button);
-    
     //----------------------------------------------------------
+    
 	virtual void touchDown(ofTouchEventArgs &touch) {
         touchDown(touch.x, touch.y, touch.id);
     }
@@ -218,10 +231,6 @@ public:
     virtual void touchCancelled(ofTouchEventArgs &touch) {
         touchCancelled(touch.x, touch.y, touch.id);
     }
-    
-    virtual void touchDown(int x, int y, int id);
-    virtual void touchMoved(int x, int y, int id);
-    virtual void touchUp(int x, int y, int id);
-    virtual void touchDoubleTap(int x, int y, int id);
-    virtual void touchCancelled(int x, int y, int id);
+
+#endif
 };
