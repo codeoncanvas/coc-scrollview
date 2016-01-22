@@ -136,7 +136,9 @@ void ScrollView::setDoubleTapRegistrationDistanceInPixels(float value) {
 //--------------------------------------------------------------
 void ScrollView::setup() {
     if(windowRect.isEmpty() == true) {
-        setWindowRect(ofRectangle(0, 0, ofGetWidth(), ofGetHeight()));
+        coc::Rect rect;
+        rect.set(0, 0, ofGetWidth(), ofGetHeight());
+        setWindowRect(rect);
     }
     
     if(contentRect.isEmpty() == true) {
@@ -175,14 +177,14 @@ void ScrollView::reset() {
 }
 
 //--------------------------------------------------------------
-void ScrollView::setWindowRect(const ofRectangle & rect) {
+void ScrollView::setWindowRect(const coc::Rect & rect) {
     if(windowRect == rect) {
         return;
     }
     windowRect = rect;
 }
 
-void ScrollView::setContentRect(const ofRectangle & rect) {
+void ScrollView::setContentRect(const coc::Rect & rect) {
     if(contentRect == rect) {
         return;
     }
@@ -397,15 +399,15 @@ ofVec2f ScrollView::getScrollPositionNorm() {
 }
 
 //--------------------------------------------------------------
-const ofRectangle & ScrollView::getWindowRect() {
+const coc::Rect & ScrollView::getWindowRect() {
     return windowRect;
 }
 
-const ofRectangle & ScrollView::getContentRect() {
+const coc::Rect & ScrollView::getContentRect() {
     return contentRect;
 }
 
-const ofRectangle & ScrollView::getScrollRect() {
+const coc::Rect & ScrollView::getScrollRect() {
     return scrollRect;
 }
 
@@ -422,7 +424,7 @@ void ScrollView::update() {
         float progress = ofMap(timeNow, animTimeStart, animTimeStart + animTimeTotal, 0.0, 1.0, true);
         bAnimating = (progress < 1.0);
         
-        ofRectangle rect = getRectLerp(scrollRectAnim0, scrollRectAnim1, progress);
+        coc::Rect rect = getRectLerp(scrollRectAnim0, scrollRectAnim1, progress);
         scrollRect = rect;
         
         scale = scrollRect.width / contentRect.width;
@@ -499,7 +501,7 @@ void ScrollView::update() {
             }
             
             float zoomScale = scaleToZoom(scale);
-            ofRectangle rect = getRectZoomedAtScreenPoint(scrollRect, zoomMovePos, zoomScale);
+            coc::Rect rect = getRectZoomedAtScreenPoint(scrollRect, zoomMovePos, zoomScale);
             scrollRect = rect;
         }
     }
@@ -532,12 +534,12 @@ void ScrollView::update() {
 }
 
 //-------------------------------------------------------------- the brains!
-ofRectangle ScrollView::getRectContainedInWindowRect(const ofRectangle & rectToContain,
+coc::Rect ScrollView::getRectContainedInWindowRect(const coc::Rect & rectToContain,
                                                         float easing) {
 
-    ofRectangle rect = rectToContain;
-    ofRectangle boundingRect = windowRect;
-    ofRectangle contentRectMin = contentRect;
+    coc::Rect rect = rectToContain;
+    coc::Rect boundingRect = windowRect;
+    coc::Rect contentRectMin = contentRect;
     contentRectMin.width *= scaleMin;
     contentRectMin.height *= scaleMin;
     
@@ -582,7 +584,7 @@ ofRectangle ScrollView::getRectContainedInWindowRect(const ofRectangle & rectToC
     return rect;
 }
 
-ofRectangle ScrollView::getRectZoomedAtScreenPoint(const ofRectangle & rect,
+coc::Rect ScrollView::getRectZoomedAtScreenPoint(const coc::Rect & rect,
                                                       const ofVec2f & screenPoint,
                                                       float zoom) {
     
@@ -599,7 +601,7 @@ ofRectangle ScrollView::getRectZoomedAtScreenPoint(const ofRectangle & rect,
     p0 += screenPoint;
     p1 += screenPoint;
     
-    ofRectangle rectNew;
+    coc::Rect rectNew;
     rectNew.x = p0.x;
     rectNew.y = p0.y;
     rectNew.width = p1.x - p0.x;
@@ -608,14 +610,14 @@ ofRectangle ScrollView::getRectZoomedAtScreenPoint(const ofRectangle & rect,
     return rectNew;
 }
 
-ofRectangle ScrollView::getRectWithContentPointAtScreenPoint(const ofRectangle & rect,
+coc::Rect ScrollView::getRectWithContentPointAtScreenPoint(const coc::Rect & rect,
                                                                 const ofVec2f & contentPoint,
                                                                 const ofVec2f & screenPoint) {
     
     ofVec2f contentScreenPoint = getScreenPointAtContentPoint(rect, contentPoint);
     ofVec2f contentPointToScreenPointDifference = screenPoint - contentScreenPoint;
     
-    ofRectangle rectNew;
+    coc::Rect rectNew;
     rectNew = scrollRect;
     rectNew.x += contentPointToScreenPointDifference.x;
     rectNew.y += contentPointToScreenPointDifference.y;
@@ -623,8 +625,8 @@ ofRectangle ScrollView::getRectWithContentPointAtScreenPoint(const ofRectangle &
     return rectNew;
 }
 
-ofRectangle ScrollView::getRectLerp(const ofRectangle & rectFrom,
-                                       const ofRectangle & rectTo,
+coc::Rect ScrollView::getRectLerp(const coc::Rect & rectFrom,
+                                       const coc::Rect & rectTo,
                                        float progress) {
     
     ofVec3f r00 = rectFrom.getTopLeft();
@@ -636,13 +638,13 @@ ofRectangle ScrollView::getRectLerp(const ofRectangle & rectFrom,
     ofVec3f r20 = r00.interpolate(r10, progress);
     ofVec3f r21 = r01.interpolate(r11, progress);
     
-    ofRectangle rect;
+    coc::Rect rect;
     rect.set(r20, r21);
     
     return rect;
 }
 
-ofMatrix4x4 ScrollView::getMatrixForRect(const ofRectangle & rect) {
+ofMatrix4x4 ScrollView::getMatrixForRect(const coc::Rect & rect) {
     
     float rectScale = rect.width / contentRect.width;
     
@@ -653,7 +655,7 @@ ofMatrix4x4 ScrollView::getMatrixForRect(const ofRectangle & rect) {
     return rectMat;
 }
 
-ofVec2f ScrollView::getContentPointAtScreenPoint(const ofRectangle & rect,
+ofVec2f ScrollView::getContentPointAtScreenPoint(const coc::Rect & rect,
                                                     const ofVec2f & screenPoint) {
     
     ofVec2f contentPoint;
@@ -662,7 +664,7 @@ ofVec2f ScrollView::getContentPointAtScreenPoint(const ofRectangle & rect,
     return contentPoint;
 }
 
-ofVec2f ScrollView::getScreenPointAtContentPoint(const ofRectangle & rect,
+ofVec2f ScrollView::getScreenPointAtContentPoint(const coc::Rect & rect,
                                                     const ofVec2f & contentPoint) {
     
     ofVec2f screenPoint;

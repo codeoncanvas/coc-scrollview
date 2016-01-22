@@ -50,6 +50,7 @@
 		673A0F781C51A770007715B7 /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Grid.h; sourceTree = "<group>"; };
 		67739D5B1C50A61D00761B58 /* cocGlm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocGlm.h; sourceTree = "<group>"; };
 		67739E621C50A88B00761B58 /* cocCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocCore.h; sourceTree = "<group>"; };
+		67C7F4B01C51B0EE003C65B2 /* cocRect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cocRect.h; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E4B69B5B0A3A1756003C02F2 /* ScrollViewExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScrollViewExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
@@ -120,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				67739E621C50A88B00761B58 /* cocCore.h */,
+				67C7F4B01C51B0EE003C65B2 /* cocRect.h */,
 			);
 			path = src;
 			sourceTree = "<group>";

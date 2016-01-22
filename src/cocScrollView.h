@@ -45,8 +45,8 @@ public:
     virtual void setup();
     virtual void reset();
     
-    void setWindowRect(const ofRectangle & rect);
-    void setContentRect(const ofRectangle & rect);
+    void setWindowRect(const coc::Rect & rect);
+    void setContentRect(const coc::Rect & rect);
     
     void fitContentToWindow(ofAspectRatioMode aspectRatioMode);
 
@@ -86,35 +86,35 @@ public:
     ofVec2f getScrollPosition();
     ofVec2f getScrollPositionNorm();
     
-    const ofRectangle & getWindowRect();
-    const ofRectangle & getContentRect();
-    const ofRectangle & getScrollRect();
+    const coc::Rect & getWindowRect();
+    const coc::Rect & getContentRect();
+    const coc::Rect & getScrollRect();
     const ofMatrix4x4 & getMatrix();
     
     virtual void update();
 
     //-------------------------------------------------------------- the brains!
-    ofRectangle getRectContainedInWindowRect(const ofRectangle & rect,
+    coc::Rect getRectContainedInWindowRect(const coc::Rect & rect,
                                              float easing=1.0);
     
-    ofRectangle getRectZoomedAtScreenPoint(const ofRectangle & rect,
+    coc::Rect getRectZoomedAtScreenPoint(const coc::Rect & rect,
                                            const ofVec2f & screenPoint,
                                            float zoom=0.0);
     
-    ofRectangle getRectWithContentPointAtScreenPoint(const ofRectangle & rect,
+    coc::Rect getRectWithContentPointAtScreenPoint(const coc::Rect & rect,
                                                      const ofVec2f & contentPoint,
                                                      const ofVec2f & screenPoint);
     
-    ofRectangle getRectLerp(const ofRectangle & rectFrom,
-                            const ofRectangle & rectTo,
+    coc::Rect getRectLerp(const coc::Rect & rectFrom,
+                            const coc::Rect & rectTo,
                             float progress);
     
-    ofMatrix4x4 getMatrixForRect(const ofRectangle & rect);
+    ofMatrix4x4 getMatrixForRect(const coc::Rect & rect);
     
-    ofVec2f getContentPointAtScreenPoint(const ofRectangle & rect,
+    ofVec2f getContentPointAtScreenPoint(const coc::Rect & rect,
                                          const ofVec2f & screenPoint);
     
-    ofVec2f getScreenPointAtContentPoint(const ofRectangle & rect,
+    ofVec2f getScreenPointAtContentPoint(const coc::Rect & rect,
                                          const ofVec2f & contentPoint);
 
     //--------------------------------------------------------------
@@ -134,17 +134,17 @@ public:
     virtual void zoomUp(const ofVec2f & point, float pointDist);
     virtual void zoomCancel();
     
-    ofRectangle windowRect;
-    ofRectangle contentRect;
+    coc::Rect windowRect;
+    coc::Rect contentRect;
     
     bool bUserInteractionEnabled;
     bool bPinchZoomEnabled;
     bool bPinchZoomSupported;
 
-    ofRectangle scrollRect;
-    ofRectangle scrollRectEased;
-    ofRectangle scrollRectAnim0;
-    ofRectangle scrollRectAnim1;
+    coc::Rect scrollRect;
+    coc::Rect scrollRectEased;
+    coc::Rect scrollRectAnim0;
+    coc::Rect scrollRectAnim1;
     float scrollEasing;
     float bounceBack;
     

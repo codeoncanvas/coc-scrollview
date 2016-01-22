@@ -22,9 +22,9 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
-    ofRectangle screenRect;
-    ofRectangle windowRect;
-    ofRectangle contentRect;
+    coc::Rect screenRect;
+    coc::Rect windowRect;
+    coc::Rect contentRect;
     ScrollView scrollView;
     
     Grid grid;
