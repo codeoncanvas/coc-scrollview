@@ -47,9 +47,6 @@ void ofApp::draw(){
     // ofxScrollView returns a matrix to do any transformations manually,
     // otherwise drawing things between begin() and end() methods will also do the trick.
     
-    ofMatrix4x4 mat;
-    mat = scrollView.getMatrix();
-    
     scrollView.begin();
     
     image.draw(0, 0, grid.getWidth(), grid.getHeight());
@@ -57,8 +54,6 @@ void ofApp::draw(){
     grid.draw();
     
     scrollView.end();
-    
-    scrollView.draw();
     
     ofSetColor(0);
     ofDrawBitmapString(ofToString((int)ofGetFrameRate()) + " fps", 20, 20);

@@ -1,12 +1,10 @@
 #pragma once
 
-#include "ofMain.h"
 #include "ofxiOS.h"
-#include "ofxiOSExtras.h"
-#include "cocScrollView.h"
+#include "ofxScrollView.h"
 #include "Grid.h"
 
-class ofApp : public ofxiOSApp{
+class ofApp : public ofxiOSApp {
 	
 public:
 
@@ -26,9 +24,9 @@ public:
     void gotMemoryWarning();
     void deviceOrientationChanged(int newOrientation);
     
-    ofRectangle windowRect;
-    ofRectangle contentRect;
-    ScrollView scrollView;
+    coc::Rect windowRect;
+    coc::Rect contentRect;
+    ofxScrollView scrollView;
     
     Grid grid;
     ofTexture image;

@@ -12,6 +12,8 @@
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		5326AEA810A23A0500278DE6 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5326AEA710A23A0500278DE6 /* CoreLocation.framework */; };
 		53F323EB10A20EDB00E0DAE4 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */; };
+		672F17CA1C58917D00D1C502 /* ofxScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 672F17C81C58917D00D1C502 /* ofxScrollView.cpp */; };
+		672F17CE1C58920100D1C502 /* cocCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 672F17CC1C58920100D1C502 /* cocCore.cpp */; };
 		677B312617D80941002E90B2 /* ofApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 677B312517D80941002E90B2 /* ofApp.mm */; };
 		67EDDB29197CC8E800CFCD8B /* Grid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67EDDB27197CC8E800CFCD8B /* Grid.cpp */; };
 		67FC7AD81C51A99400D45BF9 /* cocScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67FC7AD61C51A99400D45BF9 /* cocScrollView.cpp */; };
@@ -51,6 +53,10 @@
 		32CA4F630368D1EE00C91783 /* ofxiOS_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOS_Prefix.pch; sourceTree = "<group>"; };
 		5326AEA710A23A0500278DE6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
+		672F17C81C58917D00D1C502 /* ofxScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxScrollView.cpp; sourceTree = "<group>"; };
+		672F17C91C58917D00D1C502 /* ofxScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxScrollView.h; sourceTree = "<group>"; };
+		672F17CC1C58920100D1C502 /* cocCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cocCore.cpp; sourceTree = "<group>"; };
+		672F17CD1C58920100D1C502 /* cocRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocRect.h; sourceTree = "<group>"; };
 		677B312417D80941002E90B2 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofApp.h; sourceTree = "<group>"; };
 		677B312517D80941002E90B2 /* ofApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofApp.mm; sourceTree = "<group>"; };
 		67EDDB27197CC8E800CFCD8B /* Grid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Grid.cpp; sourceTree = "<group>"; };
@@ -150,6 +156,8 @@
 		67B5F72C1C51A4CB0046F209 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				672F17C91C58917D00D1C502 /* ofxScrollView.h */,
+				672F17C81C58917D00D1C502 /* ofxScrollView.cpp */,
 				67FC7AD71C51A99400D45BF9 /* cocScrollView.h */,
 				67FC7AD61C51A99400D45BF9 /* cocScrollView.cpp */,
 			);
@@ -169,6 +177,8 @@
 			isa = PBXGroup;
 			children = (
 				67FC7ADD1C51A9D300D45BF9 /* cocCore.h */,
+				672F17CC1C58920100D1C502 /* cocCore.cpp */,
+				672F17CD1C58920100D1C502 /* cocRect.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -344,8 +354,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				672F17CE1C58920100D1C502 /* cocCore.cpp in Sources */,
 				E4D8936E11527B74007E1F53 /* main.mm in Sources */,
 				67FC7AD81C51A99400D45BF9 /* cocScrollView.cpp in Sources */,
+				672F17CA1C58917D00D1C502 /* ofxScrollView.cpp in Sources */,
 				677B312617D80941002E90B2 /* ofApp.mm in Sources */,
 				67EDDB29197CC8E800CFCD8B /* Grid.cpp in Sources */,
 			);
@@ -368,6 +380,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ofxiOS_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = COC_OF;
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
 					src,
@@ -388,6 +401,7 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ofxiOS_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = COC_OF;
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
 					src,
