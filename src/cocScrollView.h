@@ -177,7 +177,7 @@ public:
     float scaleMax;
     glm::mat4x4 mat;
     
-    vector<ScrollViewTouchPoint> touchPoints;
+    std::vector<ScrollViewTouchPoint> touchPoints;
     ScrollViewTouchPoint touchDownPointLast;
     
     //----------------------------------------------------------

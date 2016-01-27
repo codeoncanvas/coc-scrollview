@@ -8,6 +8,8 @@
 
 namespace coc {
 
+using namespace std;
+
 //--------------------------------------------------------------
 static float const kEasingStop = 0.001;
 
