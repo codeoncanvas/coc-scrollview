@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "cocScrollView.h"
+#include "ofxScrollView.h"
 #include "Grid.h"
 
 class ofApp : public ofBaseApp{
@@ -11,6 +11,7 @@ public:
     void setup();
     void update();
     void draw();
+    void exit();
     
     void keyPressed(int key);
     void keyReleased(int key);
@@ -25,7 +26,7 @@ public:
     coc::Rect screenRect;
     coc::Rect windowRect;
     coc::Rect contentRect;
-    ScrollView scrollView;
+    ofxScrollView scrollView;
     
     Grid grid;
     

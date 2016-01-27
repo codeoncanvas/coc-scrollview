@@ -6,6 +6,8 @@
 
 #include "cocScrollView.h"
 
+namespace coc {
+
 //--------------------------------------------------------------
 static float const kEasingStop = 0.001;
 
@@ -13,7 +15,7 @@ static float const kEasingStop = 0.001;
 ScrollView::ScrollView() {
     
     bUserInteractionEnabled = false;
-    bPinchZoomEnabled = false;
+    bPinchZoomEnabled = true;
     bPinchZoomSupported = false;
     
     scrollEasing = 0.5;
@@ -30,7 +32,7 @@ ScrollView::ScrollView() {
     animTimeTotal = 0.0;
     bAnimating = false;
     
-    bDoubleTapZoomEnabled = false;
+    bDoubleTapZoomEnabled = true;
     doubleTapZoomRangeMin = 0.0;
     doubleTapZoomRangeMax = 1.0;
     doubleTapZoomIncrement = 1.0;
@@ -42,18 +44,10 @@ ScrollView::ScrollView() {
     scaleDown = 1.0;
     scaleMin = 1.0;
     scaleMax = 1.0;
-    
-    setUserInteraction(true);
-    setPinchZoom(true);
-    setDoubleTapZoom(true);
-    
-#ifdef TARGET_OPENGLES
-    bPinchZoomSupported = true;
-#endif
 }
 
 ScrollView::~ScrollView() {
-    setUserInteraction(false);
+    //
 }
 
 //--------------------------------------------------------------
@@ -62,38 +56,14 @@ void ScrollView::setUserInteraction(bool bEnable) {
         return;
     }
     if(bUserInteractionEnabled == true) {
-        bUserInteractionEnabled = false;
-        
-#if defined( COC_OF )
-        
-#ifdef TARGET_OPENGLES
-        ofRemoveListener(ofEvents().touchDown, this, &ScrollView::touchDown);
-        ofRemoveListener(ofEvents().touchMoved, this, &ScrollView::touchMoved);
-        ofRemoveListener(ofEvents().touchUp, this, &ScrollView::touchUp);
-#else
-        ofRemoveListener(ofEvents().mousePressed, this, &ScrollView::mousePressed);
-        ofRemoveListener(ofEvents().mouseDragged, this, &ScrollView::mouseDragged);
-        ofRemoveListener(ofEvents().mouseReleased, this, &ScrollView::mouseReleased);
-#endif
 
-#endif
+        bUserInteractionEnabled = false;
+        setUserInteractionOff();
         
     } else {
-        bUserInteractionEnabled = true;
-        
-#if defined( COC_OF )
-        
-#ifdef TARGET_OPENGLES
-        ofAddListener(ofEvents().touchDown, this, &ScrollView::touchDown);
-        ofAddListener(ofEvents().touchMoved, this, &ScrollView::touchMoved);
-        ofAddListener(ofEvents().touchUp, this, &ScrollView::touchUp);
-#else
-        ofAddListener(ofEvents().mousePressed, this, &ScrollView::mousePressed);
-        ofAddListener(ofEvents().mouseDragged, this, &ScrollView::mouseDragged);
-        ofAddListener(ofEvents().mouseReleased, this, &ScrollView::mouseReleased);
-#endif
 
-#endif
+        bUserInteractionEnabled = true;
+        setUserInteractionOn();
     }
 }
 
@@ -936,4 +906,6 @@ void ScrollView::touchDoubleTap(int x, int y, int id) {
 
 void ScrollView::touchCancelled(int x, int y, int id) {
     //
+}
+
 }

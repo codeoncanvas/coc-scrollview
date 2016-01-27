@@ -51,14 +51,9 @@ void ofApp::draw(){
     // ofxScrollView returns a matrix to do any transformations manually,
     // otherwise drawing things between begin() and end() methods will also do the trick.
     
-    ofMatrix4x4 mat(scrollView.getMatrixPtr());
-    
-    ofPushMatrix();
-    ofMultMatrix(mat);
-    
+    scrollView.begin();
     grid.draw();
-    
-    ofPopMatrix();
+    scrollView.end();
     
     ofSetColor(0);
     ofBeginShape();
@@ -79,6 +74,11 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
+void ofApp::exit() {
+    scrollView.setUserInteraction(false); // always remember to disable user interaction when killing the scrollview class.
+}
+
+//--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 
 }
@@ -90,7 +90,7 @@ void ofApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
