@@ -155,8 +155,8 @@ void ScrollView::reset() {
     scale = scaleMin;
     scaleDown = scaleMin;
     
-    scrollRect.width = scrollRectEased.width = contentRect.width * scale;
-    scrollRect.height = scrollRectEased.height = contentRect.height * scale;
+    scrollRect.getWidth() = scrollRectEased.getWidth() = contentRect.getWidth() * scale;
+    scrollRect.getHeight() = scrollRectEased.getHeight() = contentRect.getHeight() * scale;
     scrollRect = scrollRectEased = getRectContainedInWindowRect(scrollRect);
     
     mat = getMatrixForRect(scrollRect);
@@ -179,18 +179,18 @@ void ScrollView::setContentRect(const coc::Rect & rect) {
 
 //--------------------------------------------------------------
 void ScrollView::fitContentToWindow(ofAspectRatioMode aspectRatioMode) {
-    float sx = windowRect.width / contentRect.width;
-    float sy = windowRect.height / contentRect.height;
+    float sx = windowRect.getWidth() / contentRect.getWidth();
+    float sy = windowRect.getHeight() / contentRect.getHeight();
     
     if(aspectRatioMode == OF_ASPECT_RATIO_KEEP) {
-        scaleMin = MIN(sx, sy);
+        scaleMin = coc::min(sx, sy);
     } else if(aspectRatioMode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING) {
-        scaleMin = MAX(sx, sy);
+        scaleMin = coc::max(sx, sy);
     } else {
         scaleMin = 1.0;
     }
     
-    scaleMin = MIN(scaleMin, 1.0);
+    scaleMin = coc::min(scaleMin, 1.0);
     scaleMax = 1.0;
     scale = scaleMin;
 }
@@ -198,17 +198,17 @@ void ScrollView::fitContentToWindow(ofAspectRatioMode aspectRatioMode) {
 //--------------------------------------------------------------
 void ScrollView::setScale(float value) {
     scale = value;
-    scale = ofClamp(scale, scaleMin, scaleMax);
+    scale = coc::clamp(scale, scaleMin, scaleMax);
 }
 
 void ScrollView::setScaleMin(float value) {
     scaleMin = value;
-    scale = ofClamp(scale, scaleMin, scaleMax);
+    scale = coc::clamp(scale, scaleMin, scaleMax);
 }
 
 void ScrollView::setScaleMax(float value) {
     scaleMax = value;
-    scale = ofClamp(scale, scaleMin, scaleMax);
+    scale = coc::clamp(scale, scaleMin, scaleMax);
 }
 
 //--------------------------------------------------------------
@@ -226,7 +226,7 @@ float ScrollView::getScaleMax() {
 
 //--------------------------------------------------------------
 void ScrollView::setZoom(float value) {
-    float zoom = ofClamp(value, 0.0, 1.0);
+    float zoom = coc::clamp(value, 0.0, 1.0);
     scale = zoomToScale(zoom);
 }
 
@@ -255,14 +255,14 @@ float ScrollView::zoomToScale(float value) {
     if(scaleMin == scaleMax) {
         return scaleMin;
     }
-    return ofMap(value, 0.0, 1.0, scaleMin, scaleMax, true);
+    return coc::map(value, 0.0, 1.0, scaleMin, scaleMax, true);
 }
 
 float ScrollView::scaleToZoom(float value) {
     if(scaleMin == scaleMax) {
         return 0.0;
     }
-    return ofMap(value, scaleMin, scaleMax, 0.0, 1.0, true);
+    return coc::map(value, scaleMin, scaleMax, 0.0, 1.0, true);
 }
 
 //--------------------------------------------------------------
@@ -323,7 +323,7 @@ bool ScrollView::animStart(float animTimeInSec) {
     bAnimating = true;
 
     animTimeStart = coc::getTimeElapsed();
-    animTimeTotal = MAX(animTimeInSec, 0.0);
+    animTimeTotal = coc::max(animTimeInSec, 0.0);
     
     if(animTimeTotal < 0.001) {
         animTimeTotal = 0;
@@ -338,10 +338,10 @@ void ScrollView::setScrollPositionX(float x, bool bEase) {
     dragCancel();
     zoomCancel();
     
-    float px = ofClamp(x, 0.0, 1.0);
-    scrollRect.x = windowRect.x - (scrollRect.width - windowRect.width) * px;
+    float px = coc::clamp(x, 0.0, 1.0);
+    scrollRect.getX() = windowRect.getX() - (scrollRect.getWidth() - windowRect.getWidth()) * px;
     if(bEase == false) {
-        scrollRectEased.x = scrollRect.x;
+        scrollRectEased.x = scrollRect.getX();
     }
 }
 
@@ -349,10 +349,10 @@ void ScrollView::setScrollPositionY(float y, bool bEase) {
     dragCancel();
     zoomCancel();
     
-    float py = ofClamp(y, 0.0, 1.0);
-    scrollRect.y = windowRect.y - (scrollRect.height - windowRect.height) * py;
+    float py = coc::clamp(y, 0.0, 1.0);
+    scrollRect.getY() = windowRect.getY() - (scrollRect.getHeight() - windowRect.getHeight()) * py;
     if(bEase == false) {
-        scrollRectEased.y = scrollRect.y;
+        scrollRectEased.y = scrollRect.getY();
     }
 }
 
@@ -368,17 +368,17 @@ glm::vec2 ScrollView::getScrollPosition() {
 glm::vec2 ScrollView::getScrollPositionNorm() {
     glm::vec2 scrollPosEasedNorm;
     
-    float dx = windowRect.width - scrollRect.width;
-    float dy = windowRect.height - scrollRect.height;
+    float dx = windowRect.getWidth() - scrollRect.getWidth();
+    float dy = windowRect.getHeight() - scrollRect.getHeight();
     if(dx >= 0) {
         scrollPosEasedNorm.x = 0;
     } else {
-        scrollPosEasedNorm.x = ofMap(scrollRectEased.x, dx, 0.0, 1.0, 0.0, true);
+        scrollPosEasedNorm.x = coc::map(scrollRectEased.x, dx, 0.0, 1.0, 0.0, true);
     }
     if(dy >= 0) {
         scrollPosEasedNorm.y = 0;
     } else {
-        scrollPosEasedNorm.y = ofMap(scrollRectEased.y, dy, 0.0, 1.0, 0.0, true);
+        scrollPosEasedNorm.y = coc::map(scrollRectEased.y, dy, 0.0, 1.0, 0.0, true);
     }
     
     return scrollPosEasedNorm;
@@ -411,13 +411,13 @@ void ScrollView::update() {
     if(bAnimating == true) {
         
         float timeNow = coc::getTimeElapsed();
-        float progress = ofMap(timeNow, animTimeStart, animTimeStart + animTimeTotal, 0.0, 1.0, true);
+        float progress = coc::map(timeNow, animTimeStart, animTimeStart + animTimeTotal, 0.0, 1.0, true);
         bAnimating = (progress < 1.0);
         
         coc::Rect rect = getRectLerp(scrollRectAnim0, scrollRectAnim1, progress);
         scrollRect = rect;
         
-        scale = scrollRect.width / contentRect.width;
+        scale = scrollRect.getWidth() / contentRect.getWidth();
         
     } else {
         
@@ -438,24 +438,24 @@ void ScrollView::update() {
                 zoomMovePosPrev = zoomMovePos;
             }
             
-            scrollRect.x += dragVel.x;
-            scrollRect.y += dragVel.y;
+            scrollRect.getX() += dragVel.x;
+            scrollRect.getY() += dragVel.y;
             
         } else {
             
             dragVel *= dragVelDecay;
-            if(ABS(dragVel.x) < kEasingStop) {
+            if(coc::abs(dragVel.x) < kEasingStop) {
                 dragVel.x = 0;
             }
-            if(ABS(dragVel.y) < kEasingStop) {
+            if(coc::abs(dragVel.y) < kEasingStop) {
                 dragVel.y = 0;
             }
             bool bAddVel = true;
-            bAddVel = bAddVel && (ABS(dragVel.x) > 0);
-            bAddVel = bAddVel && (ABS(dragVel.y) > 0);
+            bAddVel = bAddVel && (coc::abs(dragVel.x) > 0);
+            bAddVel = bAddVel && (coc::abs(dragVel.y) > 0);
             if(bAddVel == true) {
-                scrollRect.x += dragVel.x;
-                scrollRect.y += dragVel.y;
+                scrollRect.getX() += dragVel.x;
+                scrollRect.getY() += dragVel.y;
             }
         }
         
@@ -465,7 +465,7 @@ void ScrollView::update() {
         
         if(bZooming == true) {
             
-            float zoomUnitDist = glm::vec2(windowRect.width, windowRect.height).length(); // diagonal.
+            float zoomUnitDist = glm::vec2(windowRect.getWidth(), windowRect.getHeight()).length(); // diagonal.
             float zoomRange = scaleMax - scaleMin;
             float zoomDiff = 0;
             
@@ -479,10 +479,10 @@ void ScrollView::update() {
                 zoomDiff = zoomMovePos.x - zoomDownPos.x;
             }
             
-            float zoom = ofMap(zoomDiff, -zoomUnitDist, zoomUnitDist, -zoomRange, zoomRange, true);
+            float zoom = coc::map(zoomDiff, -zoomUnitDist, zoomUnitDist, -zoomRange, zoomRange, true);
             
             scale = scaleDown + zoom;
-            scale = MAX(scale, 0.0);
+            scale = coc::max(scale, 0.0);
             
             if(scale < scaleMin) {
                 scale = scaleMin;
@@ -502,22 +502,22 @@ void ScrollView::update() {
     // apply easing to scrollRect.
     //==========================================================
     
-    scrollRectEased.x += (scrollRect.x - scrollRectEased.x) * scrollEasing;
-    scrollRectEased.y += (scrollRect.y - scrollRectEased.y) * scrollEasing;
-    scrollRectEased.width += (scrollRect.width - scrollRectEased.width) * scrollEasing;
-    scrollRectEased.height += (scrollRect.height - scrollRectEased.height) * scrollEasing;
+    scrollRectEased.x += (scrollRect.getX() - scrollRectEased.x) * scrollEasing;
+    scrollRectEased.y += (scrollRect.getY() - scrollRectEased.y) * scrollEasing;
+    scrollRectEased.getWidth() += (scrollRect.getWidth() - scrollRectEased.getWidth()) * scrollEasing;
+    scrollRectEased.getHeight() += (scrollRect.getHeight() - scrollRectEased.getHeight()) * scrollEasing;
     
-    if(ABS(scrollRect.x - scrollRectEased.x) < kEasingStop) {
-        scrollRectEased.x = scrollRect.x;
+    if(coc::abs(scrollRect.getX() - scrollRectEased.x) < kEasingStop) {
+        scrollRectEased.x = scrollRect.getX();
     }
-    if(ABS(scrollRect.y - scrollRectEased.y) < kEasingStop) {
-        scrollRectEased.y = scrollRect.y;
+    if(coc::abs(scrollRect.getY() - scrollRectEased.y) < kEasingStop) {
+        scrollRectEased.y = scrollRect.getY();
     }
-    if(ABS(scrollRect.width - scrollRectEased.width) < kEasingStop) {
-        scrollRectEased.width = scrollRect.width;
+    if(coc::abs(scrollRect.getWidth() - scrollRectEased.getWidth()) < kEasingStop) {
+        scrollRectEased.getWidth() = scrollRect.getWidth();
     }
-    if(ABS(scrollRect.height - scrollRectEased.height) < kEasingStop) {
-        scrollRectEased.height = scrollRect.height;
+    if(coc::abs(scrollRect.getHeight() - scrollRectEased.getHeight()) < kEasingStop) {
+        scrollRectEased.getHeight() = scrollRect.getHeight();
     }
     
     mat = getMatrixForRect(scrollRectEased);
@@ -530,44 +530,44 @@ coc::Rect ScrollView::getRectContainedInWindowRect(const coc::Rect & rectToConta
     coc::Rect rect = rectToContain;
     coc::Rect boundingRect = windowRect;
     coc::Rect contentRectMin = contentRect;
-    contentRectMin.width *= scaleMin;
-    contentRectMin.height *= scaleMin;
+    contentRectMin.getWidth() *= scaleMin;
+    contentRectMin.getHeight() *= scaleMin;
     
-    if(rect.width < windowRect.width) {
-        boundingRect.x = windowRect.x + (windowRect.width - contentRectMin.width) * 0.5;
-        boundingRect.width = contentRectMin.width;
+    if(rect.getWidth() < windowRect.getWidth()) {
+        boundingRect.getX() = windowRect.getX() + (windowRect.getWidth() - contentRectMin.getWidth()) * 0.5;
+        boundingRect.getWidth() = contentRectMin.getWidth();
     }
-    if(rect.height < windowRect.height) {
-        boundingRect.y = windowRect.y + (windowRect.height - contentRectMin.height) * 0.5;
-        boundingRect.height = contentRectMin.height;
-    }
-    
-    float x0 = boundingRect.x - MAX(rect.width - boundingRect.width, 0.0);
-    float x1 = boundingRect.x;
-    float y0 = boundingRect.y - MAX(rect.height - boundingRect.height, 0.0);
-    float y1 = boundingRect.y;
-    
-    if(rect.x < x0) {
-        rect.x += (x0 - rect.x) * easing;
-        if(ABS(x0 - rect.x) < kEasingStop) {
-            rect.x = x0;
-        }
-    } else if(rect.x > x1) {
-        rect.x += (x1 - rect.x) * easing;
-        if(ABS(x1 - rect.x) < kEasingStop) {
-            rect.x = x1;
-        }
+    if(rect.getHeight() < windowRect.getHeight()) {
+        boundingRect.getY() = windowRect.getY() + (windowRect.getHeight() - contentRectMin.getHeight()) * 0.5;
+        boundingRect.getHeight() = contentRectMin.getHeight();
     }
     
-    if(rect.y < y0) {
-        rect.y += (y0 - rect.y) * easing;
-        if(ABS(y0 - rect.y) < kEasingStop) {
-            rect.y = y0;
+    float x0 = boundingRect.getX() - coc::max(rect.getWidth() - boundingRect.getWidth(), 0.0);
+    float x1 = boundingRect.getX();
+    float y0 = boundingRect.getY() - coc::max(rect.getHeight() - boundingRect.getHeight(), 0.0);
+    float y1 = boundingRect.getY();
+    
+    if(Rect.getX() < x0) {
+        Rect.getX() += (x0 - Rect.getX()) * easing;
+        if(coc::abs(x0 - Rect.getX()) < kEasingStop) {
+            Rect.getX() = x0;
         }
-    } else if(rect.y > y1) {
-        rect.y += (y1 - rect.y) * easing;
-        if(ABS(y1 - rect.y) < kEasingStop) {
-            rect.y = y1;
+    } else if(Rect.getX() > x1) {
+        Rect.getX() += (x1 - Rect.getX()) * easing;
+        if(coc::abs(x1 - Rect.getX()) < kEasingStop) {
+            Rect.getX() = x1;
+        }
+    }
+    
+    if(Rect.getY() < y0) {
+        Rect.getY() += (y0 - Rect.getY()) * easing;
+        if(coc::abs(y0 - Rect.getY()) < kEasingStop) {
+            Rect.getY() = y0;
+        }
+    } else if(Rect.getY() > y1) {
+        Rect.getY() += (y1 - Rect.getY()) * easing;
+        if(coc::abs(y1 - Rect.getY()) < kEasingStop) {
+            Rect.getY() = y1;
         }
     }
     
@@ -583,7 +583,7 @@ coc::Rect ScrollView::getRectZoomedAtScreenPoint(const coc::Rect & rect,
     glm::vec2 contentPoint = getContentPointAtScreenPoint(rect, screenPoint);
     
     glm::vec2 p0(0, 0);
-    glm::vec2 p1(contentRect.width, contentRect.height);
+    glm::vec2 p1(contentRect.getWidth(), contentRect.getHeight());
     p0 -= contentPoint;
     p1 -= contentPoint;
     p0 *= zoomScale;
@@ -594,8 +594,8 @@ coc::Rect ScrollView::getRectZoomedAtScreenPoint(const coc::Rect & rect,
     coc::Rect rectNew;
     rectNew.x = p0.x;
     rectNew.y = p0.y;
-    rectNew.width = p1.x - p0.x;
-    rectNew.height = p1.y - p0.y;
+    rectNew.getWidth() = p1.x - p0.x;
+    rectNew.getHeight() = p1.y - p0.y;
     
     return rectNew;
 }
@@ -636,10 +636,10 @@ coc::Rect ScrollView::getRectLerp(const coc::Rect & rectFrom,
 
 glm::mat4x4 ScrollView::getMatrixForRect(const coc::Rect & rect) {
     
-    float rectScale = rect.width / contentRect.width;
+    float rectScale = rect.getWidth() / contentRect.getWidth();
     
     glm::mat4x4 rectMat;
-    rectMat = glm::translate(rectMat, glm::vec3(rect.x, rect.y, 0.0));
+    rectMat = glm::translate(rectMat, glm::vec3(Rect.getX(), Rect.getY(), 0.0));
     rectMat = glm::scale(rectMat, glm::vec3(rectScale, rectScale, 1.0));
     
     return rectMat;
@@ -649,8 +649,8 @@ glm::vec2 ScrollView::getContentPointAtScreenPoint(const coc::Rect & rect,
                                                     const glm::vec2 & screenPoint) {
     
     glm::vec2 contentPoint;
-    contentPoint.x = ofMap(screenPoint.x, rect.x, rect.x + rect.width, 0, contentRect.width, true);
-    contentPoint.y = ofMap(screenPoint.y, rect.y, rect.y + rect.height, 0, contentRect.height, true);
+    contentPoint.x = coc::map(screenPoint.x, Rect.getX(), Rect.getX() + rect.getWidth(), 0, contentRect.getWidth(), true);
+    contentPoint.y = coc::map(screenPoint.y, Rect.getY(), Rect.getY() + rect.getHeight(), 0, contentRect.getHeight(), true);
     return contentPoint;
 }
 
@@ -658,8 +658,8 @@ glm::vec2 ScrollView::getScreenPointAtContentPoint(const coc::Rect & rect,
                                                     const glm::vec2 & contentPoint) {
     
     glm::vec2 screenPoint;
-    screenPoint.x = ofMap(contentPoint.x, 0, contentRect.width, rect.x, rect.x + rect.width, true);
-    screenPoint.y = ofMap(contentPoint.y, 0, contentRect.height, rect.y, rect.y + rect.height, true);
+    screenPoint.x = coc::map(contentPoint.x, 0, contentRect.getWidth(), Rect.getX(), Rect.getX() + rect.getWidth(), true);
+    screenPoint.y = coc::map(contentPoint.y, 0, contentRect.getHeight(), Rect.getY(), Rect.getY() + rect.getHeight(), true);
     return screenPoint;
 }
 
@@ -898,9 +898,9 @@ void ScrollView::touchDoubleTap(int x, int y, int id) {
     } else {
         zoomTarget = zoomCurrent + doubleTapZoomIncrement;
     }
-    zoomTarget = ofClamp(zoomTarget, doubleTapZoomRangeMin, doubleTapZoomRangeMax);
+    zoomTarget = coc::clamp(zoomTarget, doubleTapZoomRangeMin, doubleTapZoomRangeMax);
     
-    float zoomTimeSec = ABS(zoomTarget - zoomCurrent);
+    float zoomTimeSec = coc::abs(zoomTarget - zoomCurrent);
     zoomTimeSec *= doubleTapZoomIncrementTimeInSec;
     
     zoomTo(touchPoint, zoomTarget, zoomTimeSec);
