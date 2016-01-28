@@ -49,7 +49,7 @@ public:
     void setWindowRect(const coc::Rect & rect);
     void setContentRect(const coc::Rect & rect);
     
-    void fitContentToWindow(ofAspectRatioMode aspectRatioMode);
+    void fitContentToWindow(cocAspectRatioMode aspectRatioMode);
 
     void setScale(float value);
     void setScaleMin(float value);

@@ -178,13 +178,13 @@ void ScrollView::setContentRect(const coc::Rect & rect) {
 }
 
 //--------------------------------------------------------------
-void ScrollView::fitContentToWindow(ofAspectRatioMode aspectRatioMode) {
+void ScrollView::fitContentToWindow(cocAspectRatioMode aspectRatioMode) {
     float sx = windowRect.getWidth() / contentRect.getWidth();
     float sy = windowRect.getHeight() / contentRect.getHeight();
     
-    if(aspectRatioMode == OF_ASPECT_RATIO_KEEP) {
+    if(aspectRatioMode == COC_ASPECT_RATIO_KEEP) {
         scaleMin = coc::min(sx, sy);
-    } else if(aspectRatioMode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING) {
+    } else if(aspectRatioMode == COC_ASPECT_RATIO_KEEP_BY_EXPANDING) {
         scaleMin = coc::max(sx, sy);
     } else {
         scaleMin = 1.0;
