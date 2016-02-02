@@ -50,6 +50,8 @@
 		673A0F751C51A74A007715B7 /* cocScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocScrollView.h; sourceTree = "<group>"; };
 		673A0F771C51A770007715B7 /* Grid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Grid.cpp; sourceTree = "<group>"; };
 		673A0F781C51A770007715B7 /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Grid.h; sourceTree = "<group>"; };
+		676D62421C6036F000F08020 /* cocConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocConstants.h; sourceTree = "<group>"; };
+		676D62431C6036F000F08020 /* cocMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocMath.h; sourceTree = "<group>"; };
 		67739D5B1C50A61D00761B58 /* cocGlm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocGlm.h; sourceTree = "<group>"; };
 		67739E621C50A88B00761B58 /* cocCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocCore.h; sourceTree = "<group>"; };
 		67C7F4B01C51B0EE003C65B2 /* cocRect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cocRect.h; sourceTree = "<group>"; };
@@ -127,8 +129,10 @@
 		67739E611C50A88B00761B58 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				676D62421C6036F000F08020 /* cocConstants.h */,
 				67739E621C50A88B00761B58 /* cocCore.h */,
 				67C7F4B21C51FEBB003C65B2 /* cocCore.cpp */,
+				676D62431C6036F000F08020 /* cocMath.h */,
 				67C7F4B01C51B0EE003C65B2 /* cocRect.h */,
 			);
 			path = src;
