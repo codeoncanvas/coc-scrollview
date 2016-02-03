@@ -91,8 +91,7 @@ void ScrollViewSampleApp::draw()
 
 	gl::color( Color( 0, 0, 0 ) );
 
-	gl::VertBatch vb;
-	vb.begin(GL_LINES);
+	gl::VertBatch vb(GL_LINES);
 	vb.vertex(screenRect.x1, screenRect.y1);
 	vb.vertex(screenRect.x2, screenRect.y1);
 	vb.vertex(screenRect.x2, screenRect.y2);
@@ -102,7 +101,6 @@ void ScrollViewSampleApp::draw()
 	vb.vertex(windowRect.x2, windowRect.y1);
 	vb.vertex(windowRect.x2, windowRect.y2);
 	vb.vertex(windowRect.x1, windowRect.y2);
-	vb.end();
 
 	vb.draw();
 
