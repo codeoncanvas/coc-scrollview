@@ -38,21 +38,21 @@ void ScrollViewSampleApp::setup()
 
 	grid.setup(2048, 2048);
 
-	screenRect.setWidth( getWindowWidth() );
-	screenRect.setHeight( getWindowHeight() );
+	screenRect.setW( getWindowWidth() );
+	screenRect.setH( getWindowHeight() );
 
-	windowRect.setWidth( (int)(screenRect.getWidth() * 0.9) );
-	windowRect.setHeight( (int)(screenRect.getHeight() * 0.9) );
+	windowRect.setW( (int)(screenRect.getWidth() * 0.9) );
+	windowRect.setH( (int)(screenRect.getHeight() * 0.9) );
 	windowRect.setX( (int)((screenRect.getWidth() - windowRect.getWidth()) * 0.5) );
 	windowRect.setY( (int)((screenRect.getHeight() - windowRect.getHeight()) * 0.5) );
 
-	contentRect.setWidth( grid.getWidth() );
-	contentRect.setHeight( grid.getHeight() );
+	contentRect.setW( grid.getWidth() );
+	contentRect.setH( grid.getHeight() );
 
 	//----------------------------------------------------------
 	scrollView.setWindowRect(windowRect); // window size and position of scroll view.
 	scrollView.setContentRect(contentRect); // the pixel size of the content being displayed in scroll view.
-	scrollView.fitContentToWindow(COC_ASPECT_RATIO_KEEP); // fits content into window, works with ofAspectRatioMode values.
+	scrollView.fitContentToWindow(coc::COC_ASPECT_RATIO_KEEP); // fits content into window, works with ofAspectRatioMode values.
 
 	scrollView.setScrollEasing(0.3); // smoothness of scrolling, between 0 and 1.
 	scrollView.setBounceBack(0.3); // the speed of bounce back, between 0 and 1.

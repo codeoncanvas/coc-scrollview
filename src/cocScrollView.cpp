@@ -153,8 +153,12 @@ void ScrollView::reset() {
     scale = scaleMin;
     scaleDown = scaleMin;
 
-    scrollRect.width = scrollRectEased.width = contentRect.width * scale;
-    scrollRect.height = scrollRectEased.height = contentRect.height * scale;
+    float w = contentRect.getW() * scale;
+    float h = contentRect.getH() * scale;
+    scrollRect.setW(w);
+    scrollRect.setH(h);
+    scrollRectEased.setW(w);
+    scrollRectEased.setH(h);
     scrollRect = scrollRectEased = getRectContainedInWindowRect(scrollRect);
 
     mat = getMatrixForRect(scrollRect);
@@ -177,8 +181,8 @@ void ScrollView::setContentRect(const coc::Rect & rect) {
 
 //--------------------------------------------------------------
 void ScrollView::fitContentToWindow(cocAspectRatioMode aspectRatioMode) {
-    float sx = windowRect.width / contentRect.width;
-    float sy = windowRect.height / contentRect.height;
+    float sx = windowRect.getW() / contentRect.getW();
+    float sy = windowRect.getH() / contentRect.getH();
 
     if(aspectRatioMode == COC_ASPECT_RATIO_KEEP) {
         scaleMin = coc::min(sx, sy);
@@ -337,9 +341,10 @@ void ScrollView::setScrollPositionX(float x, bool bEase) {
     zoomCancel();
 
     float px = coc::clamp(x, 0.0, 1.0);
-    scrollRect.x = windowRect.x - (scrollRect.width - windowRect.width) * px;
+    float rx = windowRect.getX() - (scrollRect.getW() - windowRect.getW()) * px;
+    scrollRect.setX(rx);
     if(bEase == false) {
-        scrollRectEased.x = scrollRect.x;
+        scrollRectEased.setX(rx);
     }
 }
 
@@ -348,9 +353,10 @@ void ScrollView::setScrollPositionY(float y, bool bEase) {
     zoomCancel();
 
     float py = coc::clamp(y, 0.0, 1.0);
-    scrollRect.y = windowRect.y - (scrollRect.height - windowRect.height) * py;
+    float ry = windowRect.getY() - (scrollRect.getH() - windowRect.getH()) * py;
+    scrollRect.setY(ry);
     if(bEase == false) {
-        scrollRectEased.y = scrollRect.y;
+        scrollRectEased.setY(ry);
     }
 }
 
@@ -360,23 +366,23 @@ void ScrollView::setScrollPosition(float x, float y, bool bEase) {
 }
 
 glm::vec2 ScrollView::getScrollPosition() {
-    return glm::vec2(scrollRectEased.x, scrollRectEased.y);
+    return glm::vec2(scrollRectEased.getX(), scrollRectEased.getY());
 }
 
 glm::vec2 ScrollView::getScrollPositionNorm() {
     glm::vec2 scrollPosEasedNorm;
 
-    float dx = windowRect.width - scrollRect.width;
-    float dy = windowRect.height - scrollRect.height;
+    float dx = windowRect.getW() - scrollRect.getW();
+    float dy = windowRect.getH() - scrollRect.getH();
     if(dx >= 0) {
         scrollPosEasedNorm.x = 0;
     } else {
-        scrollPosEasedNorm.x = coc::map(scrollRectEased.x, dx, 0.0, 1.0, 0.0, true);
+        scrollPosEasedNorm.x = coc::map(scrollRectEased.getX(), dx, 0.0, 1.0, 0.0, true);
     }
     if(dy >= 0) {
         scrollPosEasedNorm.y = 0;
     } else {
-        scrollPosEasedNorm.y = coc::map(scrollRectEased.y, dy, 0.0, 1.0, 0.0, true);
+        scrollPosEasedNorm.y = coc::map(scrollRectEased.getY(), dy, 0.0, 1.0, 0.0, true);
     }
 
     return scrollPosEasedNorm;
@@ -412,10 +418,10 @@ void ScrollView::update() {
         float progress = coc::map(timeNow, animTimeStart, animTimeStart + animTimeTotal, 0.0, 1.0, true);
         bAnimating = (progress < 1.0);
 
-        coc::Rect rect = getRectLerp(scrollRectAnim0, scrollRectAnim1, progress);
+        coc::Rect rect = coc::RectLerp(scrollRectAnim0, scrollRectAnim1, progress);
         scrollRect = rect;
 
-        scale = scrollRect.width / contentRect.width;
+        scale = scrollRect.getW() / contentRect.getH();
 
     } else {
 
@@ -436,8 +442,11 @@ void ScrollView::update() {
                 zoomMovePosPrev = zoomMovePos;
             }
 
-            scrollRect.x += dragVel.x;
-            scrollRect.y += dragVel.y;
+            float rx = scrollRect.getX() + dragVel.x;
+            float ry = scrollRect.getY() + dragVel.y;
+            
+            scrollRect.setX(rx);
+            scrollRect.setY(ry);
 
         } else {
 
@@ -452,8 +461,12 @@ void ScrollView::update() {
             bAddVel = bAddVel && (coc::abs(dragVel.x) > 0);
             bAddVel = bAddVel && (coc::abs(dragVel.y) > 0);
             if(bAddVel == true) {
-                scrollRect.x += dragVel.x;
-                scrollRect.y += dragVel.y;
+            
+                float rx = scrollRect.getX() + dragVel.x;
+                float ry = scrollRect.getY() + dragVel.y;
+                
+                scrollRect.setX(rx);
+                scrollRect.setY(ry);
             }
         }
 
@@ -463,7 +476,7 @@ void ScrollView::update() {
 
         if(bZooming == true) {
 
-            float zoomUnitDist = glm::vec2(windowRect.width, windowRect.height).length(); // diagonal.
+            float zoomUnitDist = glm::vec2(windowRect.getW(), windowRect.getH()).size(); // diagonal.
             float zoomRange = scaleMax - scaleMin;
             float zoomDiff = 0;
 
@@ -499,23 +512,20 @@ void ScrollView::update() {
     //==========================================================
     // apply easing to scrollRect.
     //==========================================================
+    
+    scrollRectEased.lerp(scrollRect, scrollEasing);
 
-    scrollRectEased.x += (scrollRect.x - scrollRectEased.x) * scrollEasing;
-    scrollRectEased.y += (scrollRect.y - scrollRectEased.y) * scrollEasing;
-    scrollRectEased.width += (scrollRect.width - scrollRectEased.width) * scrollEasing;
-    scrollRectEased.height += (scrollRect.height - scrollRectEased.height) * scrollEasing;
-
-    if(coc::abs(scrollRect.x - scrollRectEased.x) < kEasingStop) {
-        scrollRectEased.x = scrollRect.x;
+    if(coc::abs(scrollRect.getX() - scrollRectEased.getX()) < kEasingStop) {
+        scrollRectEased.setX(scrollRect.getX());
     }
-    if(coc::abs(scrollRect.y - scrollRectEased.y) < kEasingStop) {
-        scrollRectEased.y = scrollRect.y;
+    if(coc::abs(scrollRect.getY() - scrollRectEased.getY()) < kEasingStop) {
+        scrollRectEased.setY(scrollRect.getY());
     }
-    if(coc::abs(scrollRect.width - scrollRectEased.width) < kEasingStop) {
-        scrollRectEased.width = scrollRect.width;
+    if(coc::abs(scrollRect.getW() - scrollRectEased.getW()) < kEasingStop) {
+        scrollRectEased.setW(scrollRect.getW());
     }
-    if(coc::abs(scrollRect.height - scrollRectEased.height) < kEasingStop) {
-        scrollRectEased.height = scrollRect.height;
+    if(coc::abs(scrollRect.getH() - scrollRectEased.getH()) < kEasingStop) {
+        scrollRectEased.setH(scrollRect.getH());
     }
 
     mat = getMatrixForRect(scrollRectEased);
@@ -528,44 +538,52 @@ coc::Rect ScrollView::getRectContainedInWindowRect(const coc::Rect & rectToConta
     coc::Rect rect = rectToContain;
     coc::Rect boundingRect = windowRect;
     coc::Rect contentRectMin = contentRect;
-    contentRectMin.width *= scaleMin;
-    contentRectMin.height *= scaleMin;
+    
+    float rw = contentRectMin.getW() * scaleMin;
+    float rh = contentRectMin.getH() * scaleMin;
+    
+    contentRectMin.setW(rw);
+    contentRectMin.setH(rh);
 
-    if(rect.width < windowRect.width) {
-        boundingRect.x = windowRect.x + (windowRect.width - contentRectMin.width) * 0.5;
-        boundingRect.width = contentRectMin.width;
+    if(rect.getW() < windowRect.getW()) {
+        boundingRect.setX(windowRect.getX() + (windowRect.getW() - contentRectMin.getW()) * 0.5);
+        boundingRect.setW(contentRectMin.getW());
     }
-    if(rect.height < windowRect.height) {
-        boundingRect.y = windowRect.y + (windowRect.height - contentRectMin.height) * 0.5;
-        boundingRect.height = contentRectMin.height;
-    }
-
-    float x0 = boundingRect.x - coc::max(rect.width - boundingRect.width, 0.0);
-    float x1 = boundingRect.x;
-    float y0 = boundingRect.y - coc::max(rect.height - boundingRect.height, 0.0);
-    float y1 = boundingRect.y;
-
-    if(rect.x < x0) {
-        rect.x += (x0 - rect.x) * easing;
-        if(coc::abs(x0 - rect.x) < kEasingStop) {
-            rect.x = x0;
-        }
-    } else if(rect.x > x1) {
-        rect.x += (x1 - rect.x) * easing;
-        if(coc::abs(x1 - rect.x) < kEasingStop) {
-            rect.x = x1;
-        }
+    if(rect.getH() < windowRect.getH()) {
+        boundingRect.setY(windowRect.getY() + (windowRect.getH() - contentRectMin.getH()) * 0.5);
+        boundingRect.setH(contentRectMin.getH());
     }
 
-    if(rect.y < y0) {
-        rect.y += (y0 - rect.y) * easing;
-        if(coc::abs(y0 - rect.y) < kEasingStop) {
-            rect.y = y0;
+    float x0 = boundingRect.getX() - coc::max(rect.getW() - boundingRect.getW(), 0.0);
+    float x1 = boundingRect.getX();
+    float y0 = boundingRect.getY() - coc::max(rect.getH() - boundingRect.getH(), 0.0);
+    float y1 = boundingRect.getY();
+
+    if(rect.getX() < x0) {
+        float rx = rect.getX() + (x0 - rect.getX()) * easing;
+        rect.setX(rx);
+        if(coc::abs(x0 - rect.getX()) < kEasingStop) {
+            rect.setX(x0);
         }
-    } else if(rect.y > y1) {
-        rect.y += (y1 - rect.y) * easing;
-        if(coc::abs(y1 - rect.y) < kEasingStop) {
-            rect.y = y1;
+    } else if(rect.getX() > x1) {
+        float rx = rect.getX() + (x1 - rect.getX()) * easing;
+        rect.setX(rx);
+        if(coc::abs(x1 - rect.getX()) < kEasingStop) {
+            rect.setX(x1);
+        }
+    }
+
+    if(rect.getY() < y0) {
+        float ry = rect.getY() + (y0 - rect.getY()) * easing;
+        rect.setY(ry);
+        if(coc::abs(y0 - rect.getY()) < kEasingStop) {
+            rect.setY(y0);
+        }
+    } else if(rect.getY() > y1) {
+        float ry = rect.getY() + (y1 - rect.getY()) * easing;
+        rect.setY(ry);
+        if(coc::abs(y1 - rect.getY()) < kEasingStop) {
+            rect.setY(y1);
         }
     }
 
@@ -581,7 +599,7 @@ coc::Rect ScrollView::getRectZoomedAtScreenPoint(const coc::Rect & rect,
     glm::vec2 contentPoint = getContentPointAtScreenPoint(rect, screenPoint);
 
     glm::vec2 p0(0, 0);
-    glm::vec2 p1(contentRect.width, contentRect.height);
+    glm::vec2 p1(contentRect.getW(), contentRect.getH());
     p0 -= contentPoint;
     p1 -= contentPoint;
     p0 *= zoomScale;
@@ -590,10 +608,10 @@ coc::Rect ScrollView::getRectZoomedAtScreenPoint(const coc::Rect & rect,
     p1 += screenPoint;
 
     coc::Rect rectNew;
-    rectNew.x = p0.x;
-    rectNew.y = p0.y;
-    rectNew.width = p1.x - p0.x;
-    rectNew.height = p1.y - p0.y;
+    rectNew.setX(p0.x);
+    rectNew.setY(p0.y);
+    rectNew.setW(p1.x - p0.x);
+    rectNew.setH(p1.y - p0.y);
 
     return rectNew;
 }
@@ -607,57 +625,40 @@ coc::Rect ScrollView::getRectWithContentPointAtScreenPoint(const coc::Rect & rec
 
     coc::Rect rectNew;
     rectNew = scrollRect;
-    rectNew.x += contentPointToScreenPointDifference.x;
-    rectNew.y += contentPointToScreenPointDifference.y;
+    
+    float rx = rectNew.getX() + contentPointToScreenPointDifference.x;
+    float ry = rectNew.getY() + contentPointToScreenPointDifference.y;
+
+    rectNew.setX(rx);
+    rectNew.setY(ry);
 
     return rectNew;
 }
 
-coc::Rect ScrollView::getRectLerp(const coc::Rect & rectFrom,
-        const coc::Rect & rectTo,
-        float progress) {
-
-    ofVec3f r00 = rectFrom.getTopLeft();
-    ofVec3f r01 = rectFrom.getBottomRight();
-
-    ofVec3f r10 = rectTo.getTopLeft();
-    ofVec3f r11 = rectTo.getBottomRight();
-
-    ofVec3f r20 = r00.interpolate(r10, progress);
-    ofVec3f r21 = r01.interpolate(r11, progress);
-
-    coc::Rect rect;
-    rect.set(r20, r21);
-
-    return rect;
-}
-
 glm::mat4x4 ScrollView::getMatrixForRect(const coc::Rect & rect) {
 
-    float rectScale = rect.width / contentRect.width;
+    float rectScale = rect.getW() / contentRect.getW();
 
     glm::mat4x4 rectMat;
-    rectMat = glm::translate(rectMat, glm::vec3(rect.x, rect.y, 0.0));
+    rectMat = glm::translate(rectMat, glm::vec3(rect.getX(), rect.getY(), 0.0));
     rectMat = glm::scale(rectMat, glm::vec3(rectScale, rectScale, 1.0));
 
     return rectMat;
 }
 
-glm::vec2 ScrollView::getContentPointAtScreenPoint(const coc::Rect & rect,
-        const glm::vec2 & screenPoint) {
+glm::vec2 ScrollView::getContentPointAtScreenPoint(const coc::Rect & rect, const glm::vec2 & screenPoint) {
 
     glm::vec2 contentPoint;
-    contentPoint.x = coc::map(screenPoint.x, rect.x, rect.x + rect.width, 0, contentRect.width, true);
-    contentPoint.y = coc::map(screenPoint.y, rect.y, rect.y + rect.height, 0, contentRect.height, true);
+    contentPoint.x = coc::map(screenPoint.x, rect.getX(), rect.getX() + rect.getW(), 0, contentRect.getW(), true);
+    contentPoint.y = coc::map(screenPoint.y, rect.getY(), rect.getY() + rect.getH(), 0, contentRect.getH(), true);
     return contentPoint;
 }
 
-glm::vec2 ScrollView::getScreenPointAtContentPoint(const coc::Rect & rect,
-        const glm::vec2 & contentPoint) {
+glm::vec2 ScrollView::getScreenPointAtContentPoint(const coc::Rect & rect, const glm::vec2 & contentPoint) {
 
     glm::vec2 screenPoint;
-    screenPoint.x = coc::map(contentPoint.x, 0, contentRect.width, rect.x, rect.x + rect.width, true);
-    screenPoint.y = coc::map(contentPoint.y, 0, contentRect.height, rect.y, rect.y + rect.height, true);
+    screenPoint.x = coc::map(contentPoint.x, 0, contentRect.getW(), rect.getX(), rect.getX() + rect.getW(), true);
+    screenPoint.y = coc::map(contentPoint.y, 0, contentRect.getH(), rect.getY(), rect.getY() + rect.getH(), true);
     return screenPoint;
 }
 
@@ -752,7 +753,7 @@ void ScrollView::mouseReleased(int x, int y, int button) {
 
 //--------------------------------------------------------------
 void ScrollView::touchDown(int x, int y, int id) {
-    bool bHit = windowRect.inside(x, y);
+    bool bHit = windowRect.isInside(x, y);
     if(bHit == false) {
         return;
     }
@@ -770,7 +771,7 @@ void ScrollView::touchDown(int x, int y, int id) {
 
     bool bDoubleTap = true;
     bDoubleTap = bDoubleTap && (touchTimeDiff < doubleTapRegistrationTimeInSec);
-    bDoubleTap = bDoubleTap && (touchPointDiff.length() < doubleTapRegistrationDistanceInPixels);
+    bDoubleTap = bDoubleTap && (touchPointDiff.size() < doubleTapRegistrationDistanceInPixels);
 
     if(bDoubleTapZoomEnabled == true &&
             bDoubleTap == true) {
@@ -804,7 +805,7 @@ void ScrollView::touchDown(int x, int y, int id) {
         glm::vec2 tp0(touchPoints[0].touchPos);
         glm::vec2 tp1(touchPoints[1].touchPos);
         glm::vec2 tmp = (tp1 - tp0) * glm::vec2(0.5, 0.5) + tp0;
-        float dist = (tp1 - tp0).length();
+        float dist = (tp1 - tp0).size();
 
         dragCancel();
         zoomDown(tmp, dist);
@@ -836,7 +837,7 @@ void ScrollView::touchMoved(int x, int y, int id) {
         glm::vec2 tp0(touchPoints[0].touchPos);
         glm::vec2 tp1(touchPoints[1].touchPos);
         glm::vec2 tmp = (tp1 - tp0) * glm::vec2(0.5, 0.5) + tp0;
-        float dist = (tp1 - tp0).length();
+        float dist = (tp1 - tp0).size();
 
         zoomMoved(tmp, dist);
     }
@@ -867,7 +868,7 @@ void ScrollView::touchUp(int x, int y, int id) {
         glm::vec2 tp0(touchPoints[0].touchPos);
         glm::vec2 tp1(touchPoints[1].touchPos);
         glm::vec2 tmp = (tp1 - tp0) * glm::vec2(0.5, 0.5) + tp0;
-        float dist = (tp1 - tp0).length();
+        float dist = (tp1 - tp0).size();
 
         zoomUp(tmp, dist);
     }
@@ -880,7 +881,7 @@ void ScrollView::touchDoubleTap(int x, int y, int id) {
         return;
     }
 
-    bool bHit = windowRect.inside(x, y);
+    bool bHit = windowRect.isInside(x, y);
     if(bHit == false) {
         return;
     }

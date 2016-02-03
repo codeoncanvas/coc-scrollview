@@ -107,10 +107,6 @@ public:
                                                      const glm::vec2 & contentPoint,
                                                      const glm::vec2 & screenPoint);
     
-    coc::Rect getRectLerp(const coc::Rect & rectFrom,
-                            const coc::Rect & rectTo,
-                            float progress);
-    
     glm::mat4x4 getMatrixForRect(const coc::Rect & rect);
     
     glm::vec2 getContentPointAtScreenPoint(const coc::Rect & rect,
