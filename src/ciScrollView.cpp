@@ -16,7 +16,7 @@
 #include "ciScrollView.h"
 
 namespace coc {
-
+ 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -31,6 +31,7 @@ ciScrollView::ciScrollView() : ScrollView() {
 void ciScrollView::begin() {
 	gl::pushModelMatrix();
 	gl::multModelMatrix(getMatrix());
+    
 }
 
 void ciScrollView::end() {
@@ -41,17 +42,35 @@ void ciScrollView::end() {
 void ciScrollView::mouseMoved(MouseEvent & mouse) {
 	ScrollView::mouseMoved(mouse.getPos().x, mouse.getPos().y);
 }
-static int mouseButton = 0;//for consistency with OF style functions in case class only
+
 void ciScrollView::mouseDragged(MouseEvent & mouse) {
-	ScrollView::mouseDragged(mouse.getPos().x, mouse.getPos().y, mouseButton);
+    
+    if (mouse.isRightDown()) {
+        ScrollView::mouseDragged(mouse.getPos().x, mouse.getPos().y, 2);
+    }
+    else {
+        ScrollView::mouseDragged(mouse.getPos().x, mouse.getPos().y, 0);
+    }
 }
 
 void ciScrollView::mousePressed(MouseEvent & mouse) {
-	ScrollView::mousePressed(mouse.getPos().x, mouse.getPos().y, mouseButton);
+    if (mouse.isRightDown()) {
+        ScrollView::mousePressed(mouse.getPos().x, mouse.getPos().y, 2);
+    }
+    else {
+      ScrollView::mousePressed(mouse.getPos().x, mouse.getPos().y, 0);
+    }
+	
 }
 
 void ciScrollView::mouseReleased(MouseEvent & mouse) {
-	ScrollView::mouseReleased(mouse.getPos().x, mouse.getPos().y, mouseButton);
+    
+    if (mouse.isRightDown()) {
+        ScrollView::mouseReleased(mouse.getPos().x, mouse.getPos().y, 2);
+    }
+    else {
+        ScrollView::mouseReleased(mouse.getPos().x, mouse.getPos().y, 0);
+    }
 }
 
 

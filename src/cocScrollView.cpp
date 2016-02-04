@@ -159,6 +159,7 @@ void ScrollView::reset() {
     scrollRect.setH(h);
     scrollRectEased.setW(w);
     scrollRectEased.setH(h);
+    
     scrollRect = scrollRectEased = getRectContainedInWindowRect(scrollRect);
 
     mat = getMatrixForRect(scrollRect);
@@ -737,7 +738,7 @@ void ScrollView::mousePressed(int x, int y, int button) {
         touchDown(x, y, 0);
 
     } else if(button == 2) {
-
+        
         touchDown(x, y, 0);
         touchDown(x, y, 2);
     }

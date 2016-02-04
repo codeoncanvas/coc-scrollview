@@ -17,9 +17,8 @@ class ScrollViewSampleApp : public App {
 	void draw() override;
 	void cleanup() override;
 
-	coc::Rect screenRect;
-	coc::Rect windowRect;
-	coc::Rect contentRect;
+	Rectf windowRect;
+	Rectf contentRect;
 	coc::ciScrollView scrollView;
 
 	Grid grid;
@@ -30,6 +29,10 @@ class ScrollViewSampleApp : public App {
 	gl::GlslProgRef		glsl;
 };
 
+static void prepareSettings( App::Settings *settings ) {
+    settings->setWindowSize(1024, 768);
+}
+
 void ScrollViewSampleApp::setup()
 {
 
@@ -37,21 +40,16 @@ void ScrollViewSampleApp::setup()
 	glsl->bind();
 
 	grid.setup(2048, 2048);
+    
+    
+    windowRect = Rectf(getWindowBounds()) * .9;
+    windowRect.offsetCenterTo(getWindowBounds().getCenter());
 
-	screenRect.setW( getWindowWidth() );
-	screenRect.setH( getWindowHeight() );
-
-	windowRect.setW( (int)(screenRect.getWidth() * 0.9) );
-	windowRect.setH( (int)(screenRect.getHeight() * 0.9) );
-	windowRect.setX( (int)((screenRect.getWidth() - windowRect.getWidth()) * 0.5) );
-	windowRect.setY( (int)((screenRect.getHeight() - windowRect.getHeight()) * 0.5) );
-
-	contentRect.setW( grid.getWidth() );
-	contentRect.setH( grid.getHeight() );
+    contentRect = Rectf(0,0,grid.getWidth(),grid.getHeight());
 
 	//----------------------------------------------------------
-	scrollView.setWindowRect(windowRect); // window size and position of scroll view.
-	scrollView.setContentRect(contentRect); // the pixel size of the content being displayed in scroll view.
+    scrollView.setWindowRect( windowRect ); // window size and position of scroll view.
+	scrollView.setContentRect( contentRect ); // the pixel size of the content being displayed in scroll view.
 	scrollView.fitContentToWindow(coc::COC_ASPECT_RATIO_KEEP); // fits content into window, works with ofAspectRatioMode values.
 
 	scrollView.setScrollEasing(0.3); // smoothness of scrolling, between 0 and 1.
@@ -85,27 +83,13 @@ void ScrollViewSampleApp::draw()
 	// ofxScrollView returns a matrix to do any transformations manually,
 	// otherwise drawing things between begin() and end() methods will also do the trick.
 
+    gl::color( Color( .5,.5,.5 ) );
+    gl::drawSolidRect(windowRect);
+    
 	scrollView.begin();
 	grid.draw();
 	scrollView.end();
 
-	gl::color( Color( 0, 0, 0 ) );
-
-	gl::VertBatch vb(GL_LINES);
-	vb.vertex(screenRect.x1, screenRect.y1);
-	vb.vertex(screenRect.x2, screenRect.y1);
-	vb.vertex(screenRect.x2, screenRect.y2);
-	vb.vertex(screenRect.getX(), screenRect.y2);
-//	ofNextContour();
-	vb.vertex(windowRect.x1, windowRect.y1);
-	vb.vertex(windowRect.x2, windowRect.y1);
-	vb.vertex(windowRect.x2, windowRect.y2);
-	vb.vertex(windowRect.x1, windowRect.y2);
-
-	vb.draw();
-
-	gl::clear( Color( 1,1,1 ) );
-	gl::drawStrokedRect(windowRect);
 }
 
 void ScrollViewSampleApp::cleanup()
@@ -113,4 +97,4 @@ void ScrollViewSampleApp::cleanup()
 	scrollView.setUserInteraction(false); // always remember to disable user interaction when killing the scrollview class.
 }
 
-CINDER_APP( ScrollViewSampleApp, RendererGl )
+CINDER_APP( ScrollViewSampleApp, RendererGl, &prepareSettings )
