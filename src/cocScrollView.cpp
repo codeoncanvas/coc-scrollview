@@ -67,6 +67,10 @@ void ScrollView::setUserInteraction(bool bEnable) {
     }
 }
 
+bool ScrollView::getUserInteraction() {
+    return bUserInteractionEnabled;
+}
+
 void ScrollView::setPinchZoom(bool value) {
     bPinchZoomEnabled = value;
 }

@@ -31,6 +31,7 @@ public:
     ~ScrollView();
     
     void setUserInteraction(bool bEnable);
+    bool getUserInteraction();
     void setPinchZoom(bool bEnable);
     void setScrollEasing(float value);
     void setBounceBack(float value);
