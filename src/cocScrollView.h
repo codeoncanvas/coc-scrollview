@@ -109,6 +109,8 @@ public:
                                                      const glm::vec2 & screenPoint);
     
     glm::mat4x4 getMatrixForRect(const coc::Rect & rect);
+
+    glm::vec2 getContentPointAtScreenPoint(const glm::vec2 & screenPoint);
     
     glm::vec2 getContentPointAtScreenPoint(const coc::Rect & rect,
                                          const glm::vec2 & screenPoint);

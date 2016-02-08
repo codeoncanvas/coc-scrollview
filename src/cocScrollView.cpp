@@ -651,6 +651,11 @@ glm::mat4x4 ScrollView::getMatrixForRect(const coc::Rect & rect) {
     return rectMat;
 }
 
+glm::vec2 ScrollView::getContentPointAtScreenPoint(const glm::vec2 & screenPoint) {
+
+    return getContentPointAtScreenPoint( scrollRectEased, screenPoint);
+}
+
 glm::vec2 ScrollView::getContentPointAtScreenPoint(const coc::Rect & rect, const glm::vec2 & screenPoint) {
 
     glm::vec2 contentPoint;
