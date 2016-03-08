@@ -7,7 +7,7 @@
 	summary=""
 	license=""
 	url="https://github.com/codeoncanvas/coc-scrollview"
-	git="git://github.com/codeoncanvas/coc-scrollview.git"
+	git="git@github.com:codeoncanvas/coc-scrollview.git"
 	version=""
 	library=""
 	>
