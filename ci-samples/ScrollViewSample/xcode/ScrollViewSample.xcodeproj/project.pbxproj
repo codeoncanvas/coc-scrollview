@@ -18,10 +18,11 @@
 		00B9955B1B128DF400A5C623 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B995591B128DF400A5C623 /* IOSurface.framework */; };
 		140716A59E9DC30FB32B0DE7 /* Grid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 140717540A3348E238BD1794 /* Grid.cpp */; };
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
-		676D62471C6065F200F08020 /* cocCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 676D62451C6065F200F08020 /* cocCore.cpp */; };
+		6736D4EC1C90044400E9E67A /* cocCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6736D4E61C90044400E9E67A /* cocCore.cpp */; };
+		6736D4ED1C90044400E9E67A /* cocMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6736D4E81C90044400E9E67A /* cocMath.cpp */; };
+		6736D4EE1C90044400E9E67A /* cocRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6736D4EA1C90044400E9E67A /* cocRect.cpp */; };
 		676D624E1C60663700F08020 /* ciScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 676D62481C60663700F08020 /* ciScrollView.cpp */; };
 		676D624F1C60663700F08020 /* cocScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 676D624A1C60663700F08020 /* cocScrollView.cpp */; };
-		676D62521C60715E00F08020 /* cocRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 676D62511C60715E00F08020 /* cocRect.cpp */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		D4285DF76F464BCA80763857 /* CinderApp.icns in Resources */ = {isa = PBXBuildFile; fileRef = 859327DD2848412382472806 /* CinderApp.icns */; };
 		E062CD5597BB423D8B2DD0FC /* ScrollViewSampleApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B4486925C7945D9B799AF92 /* ScrollViewSampleApp.cpp */; };
@@ -43,21 +44,22 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		3B4486925C7945D9B799AF92 /* ScrollViewSampleApp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = ScrollViewSampleApp.cpp; path = ../src/ScrollViewSampleApp.cpp; sourceTree = "<group>"; };
-		452D7FC370B74B469014C7C8 /* cocRect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cocRect.h; path = "../../../../coc-core/src/cocRect.h"; sourceTree = "<group>"; };
 		5323E6B10EAFCA74003A9687 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
-		676D62441C6065F200F08020 /* cocConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cocConstants.h; path = "../../../../coc-core/src/cocConstants.h"; sourceTree = "<group>"; };
-		676D62451C6065F200F08020 /* cocCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cocCore.cpp; path = "../../../../coc-core/src/cocCore.cpp"; sourceTree = "<group>"; };
-		676D62461C6065F200F08020 /* cocMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cocMath.h; path = "../../../../coc-core/src/cocMath.h"; sourceTree = "<group>"; };
+		6736D4E51C90044400E9E67A /* cocConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cocConstants.h; path = "../../../../coc-core/src/cocConstants.h"; sourceTree = "<group>"; };
+		6736D4E61C90044400E9E67A /* cocCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cocCore.cpp; path = "../../../../coc-core/src/cocCore.cpp"; sourceTree = "<group>"; };
+		6736D4E71C90044400E9E67A /* cocCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cocCore.h; path = "../../../../coc-core/src/cocCore.h"; sourceTree = "<group>"; };
+		6736D4E81C90044400E9E67A /* cocMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cocMath.cpp; path = "../../../../coc-core/src/cocMath.cpp"; sourceTree = "<group>"; };
+		6736D4E91C90044400E9E67A /* cocMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cocMath.h; path = "../../../../coc-core/src/cocMath.h"; sourceTree = "<group>"; };
+		6736D4EA1C90044400E9E67A /* cocRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cocRect.cpp; path = "../../../../coc-core/src/cocRect.cpp"; sourceTree = "<group>"; };
+		6736D4EB1C90044400E9E67A /* cocRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cocRect.h; path = "../../../../coc-core/src/cocRect.h"; sourceTree = "<group>"; };
 		676D62481C60663700F08020 /* ciScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ciScrollView.cpp; path = ../../../src/ciScrollView.cpp; sourceTree = "<group>"; };
 		676D62491C60663700F08020 /* ciScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ciScrollView.h; path = ../../../src/ciScrollView.h; sourceTree = "<group>"; };
 		676D624A1C60663700F08020 /* cocScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cocScrollView.cpp; path = ../../../src/cocScrollView.cpp; sourceTree = "<group>"; };
 		676D624B1C60663700F08020 /* cocScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cocScrollView.h; path = ../../../src/cocScrollView.h; sourceTree = "<group>"; };
-		676D62511C60715E00F08020 /* cocRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cocRect.cpp; path = "../../../../coc-core/src/cocRect.cpp"; sourceTree = "<group>"; };
 		859327DD2848412382472806 /* CinderApp.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = CinderApp.icns; path = ../resources/CinderApp.icns; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* ScrollViewSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScrollViewSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D9BA5CF542F4E3AB03F83F5 /* ScrollViewSample_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = ScrollViewSample_Prefix.pch; sourceTree = "<group>"; };
 		8F013011E2C34F09B5D3D8BD /* Resources.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = ../include/Resources.h; sourceTree = "<group>"; };
-		97A34E4A3D334D4785B8CD73 /* cocCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cocCore.h; path = "../../../../coc-core/src/cocCore.h"; sourceTree = "<group>"; };
 		C45CADF66DA84FA090A4B1E7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -191,12 +193,13 @@
 		7DD72C22D4824A338D5DAD2E /* src */ = {
 			isa = PBXGroup;
 			children = (
-				676D62441C6065F200F08020 /* cocConstants.h */,
-				97A34E4A3D334D4785B8CD73 /* cocCore.h */,
-				676D62451C6065F200F08020 /* cocCore.cpp */,
-				676D62461C6065F200F08020 /* cocMath.h */,
-				452D7FC370B74B469014C7C8 /* cocRect.h */,
-				676D62511C60715E00F08020 /* cocRect.cpp */,
+				6736D4E51C90044400E9E67A /* cocConstants.h */,
+				6736D4E61C90044400E9E67A /* cocCore.cpp */,
+				6736D4E71C90044400E9E67A /* cocCore.h */,
+				6736D4E81C90044400E9E67A /* cocMath.cpp */,
+				6736D4E91C90044400E9E67A /* cocMath.h */,
+				6736D4EA1C90044400E9E67A /* cocRect.cpp */,
+				6736D4EB1C90044400E9E67A /* cocRect.h */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -280,12 +283,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				676D62471C6065F200F08020 /* cocCore.cpp in Sources */,
-				676D62521C60715E00F08020 /* cocRect.cpp in Sources */,
+				6736D4EE1C90044400E9E67A /* cocRect.cpp in Sources */,
+				6736D4EC1C90044400E9E67A /* cocCore.cpp in Sources */,
 				E062CD5597BB423D8B2DD0FC /* ScrollViewSampleApp.cpp in Sources */,
 				140716A59E9DC30FB32B0DE7 /* Grid.cpp in Sources */,
 				676D624E1C60663700F08020 /* ciScrollView.cpp in Sources */,
 				676D624F1C60663700F08020 /* cocScrollView.cpp in Sources */,
+				6736D4ED1C90044400E9E67A /* cocMath.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -295,7 +299,7 @@
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CINDER_PATH = ../../../../../../Cinder;
+				CINDER_PATH = ../../../../../../Cinder.git;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -322,7 +326,7 @@
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CINDER_PATH = ../../../../../../Cinder;
+				CINDER_PATH = ../../../../../../Cinder.git;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";

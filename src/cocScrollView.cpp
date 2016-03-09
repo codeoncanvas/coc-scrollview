@@ -14,9 +14,17 @@ static float const kEasingStop = 0.001;
 //--------------------------------------------------------------
 ScrollView::ScrollView() {
 
+    windowRect.set(0, 0, 0, 0);
+    contentRect.set(0, 0, 0, 0);
+    
     bUserInteractionEnabled = false;
     bPinchZoomEnabled = true;
     bPinchZoomSupported = false;
+    
+    scrollRect.set(0, 0, 0, 0);
+    scrollRectEased.set(0, 0, 0, 0);
+    scrollRectAnim0.set(0, 0, 0, 0);
+    scrollRectAnim1.set(0, 0, 0, 0);
 
     scrollEasing = 0.5;
     bounceBack = 1.0;
