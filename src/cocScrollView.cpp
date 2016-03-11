@@ -167,10 +167,10 @@ void ScrollView::reset() {
 
     float w = contentRect.getW() * scale;
     float h = contentRect.getH() * scale;
+    scrollRect.setX(0);
+    scrollRect.setY(0);
     scrollRect.setW(w);
     scrollRect.setH(h);
-    scrollRectEased.setW(w);
-    scrollRectEased.setH(h);
     
     scrollRect = scrollRectEased = getRectContainedInWindowRect(scrollRect);
 
