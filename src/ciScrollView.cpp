@@ -1,22 +1,28 @@
-//
-//	    ┌─┐╔═╗┌┬┐┌─┐
-//      │  ║ ║ ││├┤
-//      └─┘╚═╝─┴┘└─┘
-//	 ┌─┐┌─┐╔╗╔┬  ┬┌─┐┌─┐
-//	 │  ├─┤║║║└┐┌┘├─┤└─┐
-//	 └─┘┴ ┴╝╚╝ └┘ ┴ ┴└─┘
-//	http://codeoncanvas.cc
-//
-// Created by Rene Christen on 28/01/2016.
-// Copyright (c) 2016, Code on Canvas Pty Ltd
-//
+/**
+ *
+ *      ┌─┐╔═╗┌┬┐┌─┐
+ *      │  ║ ║ ││├┤
+ *      └─┘╚═╝─┴┘└─┘
+ *   ┌─┐┌─┐╔╗╔┬  ┬┌─┐┌─┐
+ *   │  ├─┤║║║└┐┌┘├─┤└─┐
+ *   └─┘┴ ┴╝╚╝ └┘ ┴ ┴└─┘
+ *
+ * Copyright (c) 2016 Code on Canvas Pty Ltd, http://CodeOnCanvas.cc
+ *
+ * This software is distributed under the MIT license
+ * https://tldrlegal.com/license/mit-license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code
+ *
+ **/
 
 #ifdef COC_CI
 
 #include "ciScrollView.h"
 
 namespace coc {
- 
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -31,7 +37,7 @@ ciScrollView::ciScrollView() : ScrollView() {
 void ciScrollView::begin() {
 	gl::pushModelMatrix();
 	gl::multModelMatrix(getMatrix());
-    
+
 }
 
 void ciScrollView::end() {
@@ -44,7 +50,7 @@ void ciScrollView::mouseMoved(MouseEvent & mouse) {
 }
 
 void ciScrollView::mouseDragged(MouseEvent & mouse) {
-    
+
     if (mouse.isRightDown()) {
         ScrollView::mouseDragged(mouse.getPos().x, mouse.getPos().y, 2);
     }
@@ -60,11 +66,11 @@ void ciScrollView::mousePressed(MouseEvent & mouse) {
     else {
       ScrollView::mousePressed(mouse.getPos().x, mouse.getPos().y, 0);
     }
-	
+
 }
 
 void ciScrollView::mouseReleased(MouseEvent & mouse) {
-    
+
     if (mouse.isRightDown()) {
         ScrollView::mouseReleased(mouse.getPos().x, mouse.getPos().y, 2);
     }

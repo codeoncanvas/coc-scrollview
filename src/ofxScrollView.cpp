@@ -1,8 +1,21 @@
-//
-//  ofxScrollView.cpp
-//  Created by Lukasz Karluk on 27/01/2016.
-//  http://codeoncanvas.cc
-//
+/**
+ *
+ *      ┌─┐╔═╗┌┬┐┌─┐
+ *      │  ║ ║ ││├┤
+ *      └─┘╚═╝─┴┘└─┘
+ *   ┌─┐┌─┐╔╗╔┬  ┬┌─┐┌─┐
+ *   │  ├─┤║║║└┐┌┘├─┤└─┐
+ *   └─┘┴ ┴╝╚╝ └┘ ┴ ┴└─┘
+ *
+ * Copyright (c) 2016 Code on Canvas Pty Ltd, http://CodeOnCanvas.cc
+ *
+ * This software is distributed under the MIT license
+ * https://tldrlegal.com/license/mit-license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code
+ *
+ **/
 
 #include "ofxScrollView.h"
 
@@ -73,13 +86,13 @@ void ofxScrollView::setUserInteractionOn() {
     ofAddListener(ofEvents().touchDown, this, &ofxScrollView::touchDown);
     ofAddListener(ofEvents().touchMoved, this, &ofxScrollView::touchMoved);
     ofAddListener(ofEvents().touchUp, this, &ofxScrollView::touchUp);
-    
+
 #else
 
     ofAddListener(ofEvents().mousePressed, this, &ofxScrollView::mousePressed);
     ofAddListener(ofEvents().mouseDragged, this, &ofxScrollView::mouseDragged);
     ofAddListener(ofEvents().mouseReleased, this, &ofxScrollView::mouseReleased);
-    
+
 #endif
 }
 
@@ -89,13 +102,13 @@ void ofxScrollView::setUserInteractionOff() {
     ofRemoveListener(ofEvents().touchDown, this, &ofxScrollView::touchDown);
     ofRemoveListener(ofEvents().touchMoved, this, &ofxScrollView::touchMoved);
     ofRemoveListener(ofEvents().touchUp, this, &ofxScrollView::touchUp);
-    
+
 #else
 
     ofRemoveListener(ofEvents().mousePressed, this, &ofxScrollView::mousePressed);
     ofRemoveListener(ofEvents().mouseDragged, this, &ofxScrollView::mouseDragged);
     ofRemoveListener(ofEvents().mouseReleased, this, &ofxScrollView::mouseReleased);
-    
+
 #endif
 }
 

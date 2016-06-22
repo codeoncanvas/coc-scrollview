@@ -1,8 +1,21 @@
-//
-//  ScrollView.cpp
-//  Created by Lukasz Karluk on 2/06/2014.
-//  http://codeoncanvas.cc
-//
+/**
+ *
+ *      ┌─┐╔═╗┌┬┐┌─┐
+ *      │  ║ ║ ││├┤
+ *      └─┘╚═╝─┴┘└─┘
+ *   ┌─┐┌─┐╔╗╔┬  ┬┌─┐┌─┐
+ *   │  ├─┤║║║└┐┌┘├─┤└─┐
+ *   └─┘┴ ┴╝╚╝ └┘ ┴ ┴└─┘
+ *
+ * Copyright (c) 2016 Code on Canvas Pty Ltd, http://CodeOnCanvas.cc
+ *
+ * This software is distributed under the MIT license
+ * https://tldrlegal.com/license/mit-license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code
+ *
+ **/
 
 #include "cocScrollView.h"
 
@@ -16,11 +29,11 @@ ScrollView::ScrollView() {
 
     windowRect.set(0, 0, 0, 0);
     contentRect.set(0, 0, 0, 0);
-    
+
     bUserInteractionEnabled = false;
     bPinchZoomEnabled = true;
     bPinchZoomSupported = false;
-    
+
     scrollRect.set(0, 0, 0, 0);
     scrollRectEased.set(0, 0, 0, 0);
     scrollRectAnim0.set(0, 0, 0, 0);
@@ -171,7 +184,7 @@ void ScrollView::reset() {
     scrollRect.setY(0);
     scrollRect.setW(w);
     scrollRect.setH(h);
-    
+
     scrollRect = scrollRectEased = getRectContainedInWindowRect(scrollRect);
 
     mat = getMatrixForRect(scrollRect);
@@ -457,7 +470,7 @@ void ScrollView::update() {
 
             float rx = scrollRect.getX() + dragVel.x;
             float ry = scrollRect.getY() + dragVel.y;
-            
+
             scrollRect.setX(rx);
             scrollRect.setY(ry);
 
@@ -474,10 +487,10 @@ void ScrollView::update() {
             bAddVel = bAddVel && (coc::abs(dragVel.x) > 0);
             bAddVel = bAddVel && (coc::abs(dragVel.y) > 0);
             if(bAddVel == true) {
-            
+
                 float rx = scrollRect.getX() + dragVel.x;
                 float ry = scrollRect.getY() + dragVel.y;
-                
+
                 scrollRect.setX(rx);
                 scrollRect.setY(ry);
             }
@@ -525,7 +538,7 @@ void ScrollView::update() {
     //==========================================================
     // apply easing to scrollRect.
     //==========================================================
-    
+
     scrollRectEased.lerp(scrollRect, scrollEasing);
 
     if(coc::abs(scrollRect.getX() - scrollRectEased.getX()) < kEasingStop) {
@@ -551,10 +564,10 @@ coc::Rect ScrollView::getRectContainedInWindowRect(const coc::Rect & rectToConta
     coc::Rect rect = rectToContain;
     coc::Rect boundingRect = windowRect;
     coc::Rect contentRectMin = contentRect;
-    
+
     float rw = contentRectMin.getW() * scaleMin;
     float rh = contentRectMin.getH() * scaleMin;
-    
+
     contentRectMin.setW(rw);
     contentRectMin.setH(rh);
 
@@ -638,7 +651,7 @@ coc::Rect ScrollView::getRectWithContentPointAtScreenPoint(const coc::Rect & rec
 
     coc::Rect rectNew;
     rectNew = scrollRect;
-    
+
     float rx = rectNew.getX() + contentPointToScreenPointDifference.x;
     float ry = rectNew.getY() + contentPointToScreenPointDifference.y;
 
@@ -755,7 +768,7 @@ void ScrollView::mousePressed(int x, int y, int button) {
         touchDown(x, y, 0);
 
     } else if(button == 2) {
-        
+
         touchDown(x, y, 0);
         touchDown(x, y, 2);
     }
