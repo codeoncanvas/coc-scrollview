@@ -1,30 +1,49 @@
+/**
+ *
+ *      ┌─┐╔═╗┌┬┐┌─┐
+ *      │  ║ ║ ││├┤
+ *      └─┘╚═╝─┴┘└─┘
+ *   ┌─┐┌─┐╔╗╔┬  ┬┌─┐┌─┐
+ *   │  ├─┤║║║└┐┌┘├─┤└─┐
+ *   └─┘┴ ┴╝╚╝ └┘ ┴ ┴└─┘
+ *
+ * Copyright (c) 2016 Code on Canvas Pty Ltd, http://CodeOnCanvas.cc
+ *
+ * This software is distributed under the MIT license
+ * https://tldrlegal.com/license/mit-license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code
+ *
+ **/
+
 #include "ofApp.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    
+
     ofSetFrameRate(60);
     ofSetLogLevel(OF_LOG_NOTICE);
-    
+
     //----------------------------------------------------------
     grid.setup(2048, 2048);
 
     screenRect.width = ofGetWidth();
     screenRect.height = ofGetHeight();
-    
+
     windowRect.width = (int)(screenRect.width * 0.9);
     windowRect.height = (int)(screenRect.height * 0.9);
     windowRect.x = (int)((screenRect.width - windowRect.width) * 0.5);
     windowRect.y = (int)((screenRect.height - windowRect.height) * 0.5);
-    
+
     contentRect.width = grid.getWidth();
     contentRect.height = grid.getHeight();
-    
+
     //----------------------------------------------------------
     scrollView.setWindowRect(windowRect); // window size and position of scroll view.
     scrollView.setContentRect(contentRect); // the pixel size of the content being displayed in scroll view.
     scrollView.fitContentToWindow(coc::COC_ASPECT_RATIO_KEEP); // fits content into window, works with ofAspectRatioMode values.
-    
+
     scrollView.setScrollEasing(0.3); // smoothness of scrolling, between 0 and 1.
     scrollView.setBounceBack(0.3); // the speed of bounce back, between 0 and 1.
     scrollView.setDragVelocityDecay(0.9); // the speed of decay of drag velocity after release, between 0 and 1.
@@ -35,26 +54,26 @@ void ofApp::setup(){
     scrollView.setDoubleTapZoomIncrementTimeInSec(0.3); // the time amount of time for zoom increment.
     scrollView.setDoubleTapRegistrationTimeInSec(0.25); // the time threshold between taps for double tap event to register.
     scrollView.setDoubleTapRegistrationDistanceInPixels(20); // the distance threshold between taps for double tap event to register.
-    
+
     scrollView.setup(); // setup must always be called at the end of scroll view config.
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    
+
     scrollView.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    
+
     // ofxScrollView returns a matrix to do any transformations manually,
     // otherwise drawing things between begin() and end() methods will also do the trick.
-    
+
     scrollView.begin();
     grid.draw();
     scrollView.end();
-    
+
     ofSetColor(0);
     ofBeginShape();
     ofVertex(screenRect.x, screenRect.y);
@@ -90,7 +109,7 @@ void ofApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
-    
+
 }
 
 //--------------------------------------------------------------
@@ -119,6 +138,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

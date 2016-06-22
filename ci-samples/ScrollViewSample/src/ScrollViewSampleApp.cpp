@@ -1,3 +1,22 @@
+/**
+ *
+ *      ┌─┐╔═╗┌┬┐┌─┐
+ *      │  ║ ║ ││├┤
+ *      └─┘╚═╝─┴┘└─┘
+ *   ┌─┐┌─┐╔╗╔┬  ┬┌─┐┌─┐
+ *   │  ├─┤║║║└┐┌┘├─┤└─┐
+ *   └─┘┴ ┴╝╚╝ └┘ ┴ ┴└─┘
+ *
+ * Copyright (c) 2016 Code on Canvas Pty Ltd, http://CodeOnCanvas.cc
+ *
+ * This software is distributed under the MIT license
+ * https://tldrlegal.com/license/mit-license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code
+ *
+ **/
+
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
@@ -24,7 +43,7 @@ class ScrollViewSampleApp : public App {
 	coc::ciScrollView scrollView;
 
 	Grid grid;
-    
+
     bool bUserInteractionManual;
 };
 
@@ -35,12 +54,12 @@ static void prepareSettings( App::Settings *settings ) {
 void ScrollViewSampleApp::setup() {
 
 	grid.setup(2048, 2048);
-    
+
     windowRect = Rectf(getWindowBounds()) * .9;
     windowRect.offsetCenterTo(getWindowBounds().getCenter());
 
     contentRect = Rectf(0,0,grid.getWidth(),grid.getHeight());
-    
+
     bUserInteractionManual = true;
 
 	//----------------------------------------------------------
@@ -76,7 +95,7 @@ void ScrollViewSampleApp::draw() {
 
     gl::color( Color( .5,.5,.5 ) );
     gl::drawSolidRect(windowRect);
-    
+
 	scrollView.begin();
 	grid.draw();
 	scrollView.end();
