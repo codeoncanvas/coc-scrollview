@@ -9,11 +9,16 @@
 namespace coc {
 
 //--------------------------------------------------------------
-ScrollView::ScrollView() {
-    numOfButtons = 10;
-    bWindowPosChanged = false;
-    bWindowSizeChanged = false;
-    bContentSizeChanged = false;
+static float const kEasingStop = 0.001;
+
+//--------------------------------------------------------------
+ScrollView::ScrollView() :
+numOfButtons(10),
+bWindowPosChanged(false),
+bWindowSizeChanged(false),
+bContentSizeChanged(false),
+dragVelDecay(0.9) {
+    //
 }
 
 ScrollView::~ScrollView() {
@@ -55,7 +60,8 @@ coc::Rect ScrollView::getWindowRect() const {
 
 //--------------------------------------------------------------
 void ScrollView::setContentSize(const glm::vec2 & value) {
-    bContentSizeChanged = (contentSize != value);
+    bContentSizeChanged = (contentInitSize != value);
+    contentInitSize = value;
     contentSize = value;
 }
 
@@ -64,7 +70,16 @@ void ScrollView::setContentRect(const coc::Rect & value) {
 }
 
 const glm::vec2 & ScrollView::getContentSize() const {
-    return contentSize;
+    return contentInitSize;
+}
+
+//--------------------------------------------------------------
+void ScrollView::setDragVelocityDecay(float value) {
+    dragVelDecay = value;
+}
+
+float ScrollView::getDragVelocityDecay() const {
+    return dragVelDecay;
 }
 
 //--------------------------------------------------------------
@@ -90,7 +105,7 @@ void ScrollView::update(float timeDelta) {
     bWindowChanged = bWindowChanged || bWindowPosChanged;
     bWindowChanged = bWindowChanged || bWindowSizeChanged;
 
-    //----------------------------------------------------------
+    //---------------------------------------------------------- buttons.
     bool bNumOfButtonsChanged = (buttons.size() != numOfButtons);
     if(bNumOfButtonsChanged) {
         buttons.clear();
@@ -107,6 +122,48 @@ void ScrollView::update(float timeDelta) {
             buttons[i]->setRect(windowRect);
         }
     }
+    
+    for(int i=0; i<buttons.size(); i++) {
+        buttons[i]->update();
+    }
+    
+    //---------------------------------------------------------- drag.
+    for(int i=0; i<buttons.size(); i++) {
+        if(buttons[i]->pressedInside()) {
+            dragButton = buttons[i];
+            dragDownPos = dragMovePos = dragMovePosPrev = dragButton->getPointPosLast();
+            dragVel = glm::vec2(0, 0);
+        }
+    }
+    
+    if(dragButton) {
+        dragMovePosPrev = dragMovePos;
+        dragMovePos = dragButton->getPointPosLast();
+        dragVel = dragMovePos - dragMovePosPrev;
+        
+        bool bDragReleased = false;
+        bDragReleased = bDragReleased || dragButton->releasedInside();
+        bDragReleased = bDragReleased || dragButton->releasedOutside();
+        if(bDragReleased) {
+            dragButton = nullptr;
+        }
+    } else {
+        dragVel *= dragVelDecay;
+        if(coc::abs(dragVel.x) < kEasingStop) {
+            dragVel.x = 0;
+        }
+        if(coc::abs(dragVel.y) < kEasingStop) {
+            dragVel.y = 0;
+        }
+    }
+    
+    contentPos.x += dragVel.x;
+    contentPos.y += dragVel.y;
+    
+    //----------------------------------------------------------
+    float modelMatrixScale = contentSize.x / contentInitSize.x;
+    modelMatrix = glm::translate(glm::vec3(contentPos.x, contentPos.y, 0.0));
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(modelMatrixScale, modelMatrixScale, 1.0));
     
     //----------------------------------------------------------
     bWindowPosChanged = false;

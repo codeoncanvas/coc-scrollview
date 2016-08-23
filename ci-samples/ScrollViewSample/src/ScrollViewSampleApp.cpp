@@ -50,12 +50,12 @@ void ScrollViewSampleApp::setup() {
     scrollView->setWindowRect( windowRect ); // window size and position of scroll view.
 	scrollView->setContentRect( contentRect ); // the pixel size of the content being displayed in scroll view.
 //	scrollView->fitContentToWindow(coc::COC_ASPECT_RATIO_KEEP); // fits content into window, works with ofAspectRatioMode values.
-//
+
 //	scrollView->setScrollEasing(0.3); // smoothness of scrolling, between 0 and 1.
 //	scrollView->setBounceBack(0.3); // the speed of bounce back, between 0 and 1.
-//	scrollView->setDragVelocityDecay(0.9); // the speed of decay of drag velocity after release, between 0 and 1.
+	scrollView->setDragVelocityDecay(0.9); // the speed of decay of drag velocity after release, between 0 and 1.
 //	scrollView->setUserInteraction((bUserInteractionManual == false)); // enable / disable mouse or touch interaction.
-//
+
 //	scrollView->setDoubleTapZoom(true); // enable double tap zoom.
 //	scrollView->setDoubleTapZoomIncrement(1.0); // the increment value of zoom on double tap, between 0 and 1.
 //	scrollView->setDoubleTapZoomIncrementTimeInSec(0.3); // the time amount of time for zoom increment.
@@ -72,17 +72,29 @@ void ScrollViewSampleApp::update() {
 
 void ScrollViewSampleApp::draw() {
 
-	gl::clear( Color::black() );
+	gl::clear(Color(0.5, 0.5, 0.5));
 
-	// ofxScrollView returns a matrix to do any transformations manually,
+	// ScrollView returns a matrix to do any transformations manually,
 	// otherwise drawing things between begin() and end() methods will also do the trick.
 
-    gl::color( Color( .5,.5,.5 ) );
-    gl::drawSolidRect(windowRect);
-    
 	scrollView->begin();
 	grid.draw();
 	scrollView->end();
+
+    gl::ScopedColor color(Color(0, 0, 0));
+	gl::VertBatch vb( GL_TRIANGLE_STRIP);
+    vb.vertex(0, 0);
+    vb.vertex(windowRect.x1, windowRect.y1);
+    vb.vertex(getWindowWidth(), 0);
+    vb.vertex(windowRect.x2, windowRect.y1);
+    vb.vertex(getWindowWidth(), getWindowHeight());
+    vb.vertex(windowRect.x2, windowRect.y2);
+    vb.vertex(0, getWindowHeight());
+    vb.vertex(windowRect.x1, windowRect.y2);
+    vb.vertex(0, 0);
+    vb.vertex(windowRect.x1, windowRect.y1);
+	vb.draw();
+    
 }
 
 void ScrollViewSampleApp::cleanup() {

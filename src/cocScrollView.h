@@ -14,7 +14,6 @@ namespace coc {
 class ScrollView;
 typedef std::shared_ptr<ScrollView> ScrollViewRef;
 
-//--------------------------------------------------------------
 class ScrollView {
     
 public:
@@ -23,6 +22,7 @@ public:
     ~ScrollView();
     
     static ScrollViewRef create() { return ScrollViewRef(new ScrollView()); }
+    
     virtual coc::ButtonRef initButton() const { return coc::Button::create(); }
 
     void setWindowPos(const glm::vec2 & value);
@@ -38,16 +38,20 @@ public:
     
     void setMaxNumOfTouchPoints(unsigned int value) { numOfButtons = value; }
     
+    void setDragVelocityDecay(float value);
+    float getDragVelocityDecay() const;
+    
     const glm::mat4x4 & getModelMatrix() const;
     const float * getModelMatrixPtr() const;
     
+    //----------------------------------------------------------
     virtual void setup();
     
     virtual void update(float timeDelta=0);
     
     virtual void draw() const {}
 
-    //--------------------------------------------------------------
+    //----------------------------------------------------------
 	virtual void pointMoved(int x, int y, unsigned int pointID);
     virtual void pointPressed(int x, int y, unsigned int pointID);
 	virtual void pointDragged(int x, int y, unsigned int pointID);
@@ -69,8 +73,15 @@ protected:
     
     glm::vec2 contentPos;
     glm::vec2 contentSize;
-    glm::vec2 contentScaledSize;
+    glm::vec2 contentInitSize;
     bool bContentSizeChanged;
+
+    coc::ButtonRef dragButton;
+    glm::vec2 dragDownPos;
+    glm::vec2 dragMovePos;
+    glm::vec2 dragMovePosPrev;
+    glm::vec2 dragVel;
+    float dragVelDecay;
     
     glm::mat4 modelMatrix;
     
