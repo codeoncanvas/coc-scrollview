@@ -11,6 +11,7 @@
 // Copyright (c) 2016, Code on Canvas Pty Ltd//
 
 #include "Grid.h"
+#include "cinder/Utilities.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -51,11 +52,11 @@ void Grid::draw() {
 
 	for(int yi=0; yi<countY; yi++) {
 		for(int xi=0; xi<countX; xi++) {
-			int i = (yi * countX) + xi;
-			int x = xi * sizeX;
-			int y = yi * sizeY;
-
-//			ofDrawBitmapString(ofToString(i), x + 10, y + 20);//todo: font
+            int i = (yi * countX) + xi;
+            int x = xi * sizeX;
+            int y = yi * sizeY;
+            
+            gl::drawString(toString(i), glm::vec2(x + 10, y + 20), ci::ColorA(0, 0, 0, 1));
 		}
 	}
 

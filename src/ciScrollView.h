@@ -16,39 +16,30 @@
 #ifdef COC_CI
 
 #include "cocScrollView.h"
-#include "cinder/app/App.h"
-#include "cinder/gl/gl.h"
+#include "ciButton.h"
 
 namespace coc {
+
+class ciScrollView;
+typedef std::shared_ptr<ciScrollView> ciScrollViewRef;
 
 class ciScrollView : public coc::ScrollView {
 
 public:
 
-	ciScrollView();
+    static ciScrollViewRef create() { return ciScrollViewRef(new ciScrollView()); }
+    virtual coc::ButtonRef initButton() const override { return coc::ciButton::create(); }
 
-	void begin();
-	void end();
-
-	void mouseMoved(ci::app::MouseEvent & mouse);
-	void mouseDragged(ci::app::MouseEvent & mouse);
-	void mousePressed(ci::app::MouseEvent & mouse);
-	void mouseReleased(ci::app::MouseEvent & mouse);
-
-#ifdef CINDER_COCOA_TOUCH
-	//todo: touch events
-#endif
+	void begin() override;
+	void end() override;
 
 protected:
 
-	void setUserInteractionOn();
-	void setUserInteractionOff();
+    //
 
-	ci::signals::ScopedConnection  cbMouseDown, cbMouseDrag, cbMouseUp;
+};
 
-};//class ciScrollView
-
-}//namespace coc
+}
 
 #endif
 
