@@ -39,7 +39,8 @@ public:
     void setMaxNumOfTouchPoints(unsigned int value) { numOfButtons = value; }
     
     void setDragVelocityDecay(float value);
-    float getDragVelocityDecay() const;
+    void setDragVelocityDecay(const glm::vec2 & value);
+    const glm::vec2 & getDragVelocityDecay() const;
     
     void setScrollEasing(float value);
     void setScrollEasing(const glm::vec2 & value);
@@ -89,7 +90,7 @@ protected:
     glm::vec2 dragMovePos;
     glm::vec2 dragMovePosPrev;
     glm::vec2 dragVel;
-    float dragVelDecay;
+    glm::vec2 dragVelDecay;
     
     glm::vec2 scrollEasing;
     glm::vec2 bounceEasing;

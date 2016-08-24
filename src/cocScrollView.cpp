@@ -17,7 +17,7 @@ numOfButtons(10),
 bWindowPosChanged(false),
 bWindowSizeChanged(false),
 bContentSizeChanged(false),
-dragVelDecay(0.9),
+dragVelDecay(0.9, 0.9),
 scrollEasing(1.0, 1.0),
 bounceEasing(1.0, 1.0) {
     //
@@ -77,10 +77,14 @@ const glm::vec2 & ScrollView::getContentSize() const {
 
 //--------------------------------------------------------------
 void ScrollView::setDragVelocityDecay(float value) {
+    setDragVelocityDecay(glm::vec2(value, value));
+}
+
+void ScrollView::setDragVelocityDecay(const glm::vec2 & value) {
     dragVelDecay = value;
 }
 
-float ScrollView::getDragVelocityDecay() const {
+const glm::vec2 & ScrollView::getDragVelocityDecay() const {
     return dragVelDecay;
 }
 
