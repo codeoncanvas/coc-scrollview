@@ -41,6 +41,14 @@ public:
     void setDragVelocityDecay(float value);
     float getDragVelocityDecay() const;
     
+    void setScrollEasing(float value);
+    void setScrollEasing(const glm::vec2 & value);
+    const glm::vec2 & getScrollEasing() const;
+    
+    void setBounceEasing(float value);
+    void setBounceEasing(const glm::vec2 & value);
+    const glm::vec2 & getBounceEasing() const;
+    
     const glm::mat4x4 & getModelMatrix() const;
     const float * getModelMatrixPtr() const;
     
@@ -82,6 +90,9 @@ protected:
     glm::vec2 dragMovePosPrev;
     glm::vec2 dragVel;
     float dragVelDecay;
+    
+    glm::vec2 scrollEasing;
+    glm::vec2 bounceEasing;
     
     glm::mat4 modelMatrix;
     

@@ -17,7 +17,9 @@ numOfButtons(10),
 bWindowPosChanged(false),
 bWindowSizeChanged(false),
 bContentSizeChanged(false),
-dragVelDecay(0.9) {
+dragVelDecay(0.9),
+scrollEasing(1.0, 1.0),
+bounceEasing(1.0, 1.0) {
     //
 }
 
@@ -83,6 +85,32 @@ float ScrollView::getDragVelocityDecay() const {
 }
 
 //--------------------------------------------------------------
+void ScrollView::setScrollEasing(float value) {
+    setScrollEasing(glm::vec2(value, value));
+}
+
+void ScrollView::setScrollEasing(const glm::vec2 & value) {
+    scrollEasing = value;
+}
+
+const glm::vec2 & ScrollView::getScrollEasing() const {
+    return scrollEasing;
+}
+
+//--------------------------------------------------------------
+void ScrollView::setBounceEasing(float value) {
+    setBounceEasing(glm::vec2(value, value));
+}
+
+void ScrollView::setBounceEasing(const glm::vec2 & value) {
+    bounceEasing = value;
+}
+
+const glm::vec2 & ScrollView::getBounceEasing() const {
+    return bounceEasing;
+}
+
+//--------------------------------------------------------------
 const glm::mat4x4 & ScrollView::getModelMatrix() const {
     return modelMatrix;
 }
@@ -136,7 +164,8 @@ void ScrollView::update(float timeDelta) {
         }
     }
     
-    if(dragButton) {
+    bool bDragging = (dragButton != nullptr);
+    if(bDragging) {
         dragMovePosPrev = dragMovePos;
         dragMovePos = dragButton->getPointPosLast();
         dragVel = dragMovePos - dragMovePosPrev;
@@ -159,10 +188,27 @@ void ScrollView::update(float timeDelta) {
     
     contentPos.x += dragVel.x;
     contentPos.y += dragVel.y;
+
+    //----------------------------------------------------------
+    glm::vec2 boundPos0(coc::max(contentSize.x - windowSize.x, 0) * -1,
+                        coc::max(contentSize.y - windowSize.y, 0) * -1);
+    glm::vec2 boundPos1(0, 0);
+    
+    glm::vec2 contentTargetPos;
+    contentTargetPos.x = coc::clamp(contentPos.x, boundPos0.x, boundPos1.x);
+    contentTargetPos.y = coc::clamp(contentPos.y, boundPos0.y, boundPos1.y);
+    
+    contentPos += (contentTargetPos - contentPos) * bounceEasing;
+    if(coc::abs(contentPos.x - contentTargetPos.x) < kEasingStop) {
+        contentPos.x = contentTargetPos.x;
+    }
+    if(coc::abs(contentPos.y - contentTargetPos.y) < kEasingStop) {
+        contentPos.y = contentTargetPos.y;
+    }
     
     //----------------------------------------------------------
     float modelMatrixScale = contentSize.x / contentInitSize.x;
-    modelMatrix = glm::translate(glm::vec3(contentPos.x, contentPos.y, 0.0));
+    modelMatrix = glm::translate(glm::vec3(windowPos.x + contentPos.x, windowPos.y + contentPos.y, 0.0));
     modelMatrix = glm::scale(modelMatrix, glm::vec3(modelMatrixScale, modelMatrixScale, 1.0));
     
     //----------------------------------------------------------
