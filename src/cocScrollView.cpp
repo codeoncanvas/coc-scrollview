@@ -163,6 +163,7 @@ void ScrollView::update(float timeDelta) {
     for(int i=0; i<buttons.size(); i++) {
         if(buttons[i]->pressedInside()) {
             dragButton = buttons[i];
+            dragContentPos = contentPos;
             dragDownPos = dragMovePos = dragMovePosPrev = dragButton->getPointPosLast();
             dragVel = glm::vec2(0, 0);
         }
@@ -170,8 +171,10 @@ void ScrollView::update(float timeDelta) {
     
     bool bDragging = (dragButton != nullptr);
     if(bDragging) {
+        
         dragMovePosPrev = dragMovePos;
         dragMovePos = dragButton->getPointPosLast();
+        dragDist = dragMovePos - dragDownPos;
         dragVel = dragMovePos - dragMovePosPrev;
         
         bool bDragReleased = false;
@@ -180,7 +183,11 @@ void ScrollView::update(float timeDelta) {
         if(bDragReleased) {
             dragButton = nullptr;
         }
+        
+        contentPos = dragContentPos + dragDist;
+        
     } else {
+    
         dragVel *= dragVelDecay;
         if(coc::abs(dragVel.x) < kEasingStop) {
             dragVel.x = 0;
@@ -188,34 +195,67 @@ void ScrollView::update(float timeDelta) {
         if(coc::abs(dragVel.y) < kEasingStop) {
             dragVel.y = 0;
         }
+        
+        contentPos += dragVel;
     }
-    
-    contentPos.x += dragVel.x;
-    contentPos.y += dragVel.y;
 
-    //----------------------------------------------------------
-    glm::vec2 boundPos0(coc::max(contentSize.x - windowSize.x, 0) * -1,
-                        coc::max(contentSize.y - windowSize.y, 0) * -1);
-    glm::vec2 boundPos1(0, 0);
+    //---------------------------------------------------------- contain to bounds.
+    glm::vec2 boundsPos0(coc::min(windowSize.x - contentSize.x, 0),
+                         coc::min(windowSize.y - contentSize.y, 0));
+    glm::vec2 boundsPos1(0, 0);
     
-    glm::vec2 contentTargetPos;
-    contentTargetPos.x = coc::clamp(contentPos.x, boundPos0.x, boundPos1.x);
-    contentTargetPos.y = coc::clamp(contentPos.y, boundPos0.y, boundPos1.y);
-    
-    contentPos += (contentTargetPos - contentPos) * bounceEasing;
-    if(coc::abs(contentPos.x - contentTargetPos.x) < kEasingStop) {
-        contentPos.x = contentTargetPos.x;
+    if(bDragging) {
+
+        float dragBoundsLimit = 100;
+        float contentDiff = 0;
+
+        if(contentPos.x < boundsPos0.x) {
+        
+            contentDiff = contentPos.x - boundsPos0.x;
+            contentDiff = coc::clamp(contentDiff, -dragBoundsLimit, 0);
+            contentPos.x = dragContentPos.x + contentDiff;
+            
+        } else if(contentPos.x > boundsPos1.x) {
+        
+            contentDiff = contentPos.x - boundsPos1.x;
+            contentDiff = coc::clamp(contentDiff, 0, dragBoundsLimit);
+            contentPos.x = dragContentPos.x + contentDiff;
+        }
+        
+        if(contentPos.y < boundsPos0.y) {
+        
+            contentDiff = contentPos.y - boundsPos0.y;
+            contentDiff = coc::clamp(contentDiff, -dragBoundsLimit, 0);
+            contentPos.y = dragContentPos.y + contentDiff;
+            
+        } else if(contentPos.y > boundsPos1.y) {
+        
+            contentDiff = contentPos.y - boundsPos1.y;
+            contentDiff = coc::clamp(contentDiff, 0, dragBoundsLimit);
+            contentPos.y = dragContentPos.y + contentDiff;
+        }
+
+    } else {
+        
+        glm::vec2 contentTargetPos;
+        contentTargetPos.x = coc::clamp(contentPos.x, boundsPos0.x, boundsPos1.x);
+        contentTargetPos.y = coc::clamp(contentPos.y, boundsPos0.y, boundsPos1.y);
+        
+        contentPos += (contentTargetPos - contentPos) * bounceEasing;
+        if(coc::abs(contentPos.x - contentTargetPos.x) < kEasingStop) {
+            contentPos.x = contentTargetPos.x;
+        }
+        if(coc::abs(contentPos.y - contentTargetPos.y) < kEasingStop) {
+            contentPos.y = contentTargetPos.y;
+        }
     }
-    if(coc::abs(contentPos.y - contentTargetPos.y) < kEasingStop) {
-        contentPos.y = contentTargetPos.y;
-    }
     
-    //----------------------------------------------------------
+    //---------------------------------------------------------- model matrix.
     float modelMatrixScale = contentSize.x / contentInitSize.x;
     modelMatrix = glm::translate(glm::vec3(windowPos.x + contentPos.x, windowPos.y + contentPos.y, 0.0));
     modelMatrix = glm::scale(modelMatrix, glm::vec3(modelMatrixScale, modelMatrixScale, 1.0));
     
-    //----------------------------------------------------------
+    //---------------------------------------------------------- flags.
     bWindowPosChanged = false;
     bWindowSizeChanged = false;
 }

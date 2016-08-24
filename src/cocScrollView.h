@@ -86,9 +86,11 @@ protected:
     bool bContentSizeChanged;
 
     coc::ButtonRef dragButton;
+    glm::vec2 dragContentPos;
     glm::vec2 dragDownPos;
     glm::vec2 dragMovePos;
     glm::vec2 dragMovePosPrev;
+    glm::vec2 dragDist;
     glm::vec2 dragVel;
     glm::vec2 dragVelDecay;
     
