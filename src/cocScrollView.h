@@ -42,6 +42,10 @@ public:
     void setDragVelocityDecay(const glm::vec2 & value);
     const glm::vec2 & getDragVelocityDecay() const;
     
+    void setDragBoundsLimit(float value);
+    void setDragBoundsLimit(const glm::vec2 & value);
+    const glm::vec2 & getDragBoundsLimit() const;
+    
     void setScrollEasing(float value);
     void setScrollEasing(const glm::vec2 & value);
     const glm::vec2 & getScrollEasing() const;
@@ -93,6 +97,7 @@ protected:
     glm::vec2 dragDist;
     glm::vec2 dragVel;
     glm::vec2 dragVelDecay;
+    glm::vec2 dragBoundsLimit;
     
     glm::vec2 scrollEasing;
     glm::vec2 bounceEasing;

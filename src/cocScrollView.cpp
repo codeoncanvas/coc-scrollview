@@ -18,6 +18,7 @@ bWindowPosChanged(false),
 bWindowSizeChanged(false),
 bContentSizeChanged(false),
 dragVelDecay(0.9, 0.9),
+dragBoundsLimit(100, 100),
 scrollEasing(1.0, 1.0),
 bounceEasing(1.0, 1.0) {
     //
@@ -89,6 +90,19 @@ const glm::vec2 & ScrollView::getDragVelocityDecay() const {
 }
 
 //--------------------------------------------------------------
+void ScrollView::setDragBoundsLimit(float value) {
+    setDragBoundsLimit(glm::vec2(value, value));
+}
+
+void ScrollView::setDragBoundsLimit(const glm::vec2 & value) {
+    dragBoundsLimit = value;
+}
+
+const glm::vec2 & ScrollView::getDragBoundsLimit() const {
+    return dragBoundsLimit;
+}
+
+//--------------------------------------------------------------
 void ScrollView::setScrollEasing(float value) {
     setScrollEasing(glm::vec2(value, value));
 }
@@ -132,6 +146,9 @@ void ScrollView::setup() {
 void ScrollView::update(float timeDelta) {
 
     coc::Rect windowRect = getWindowRect();
+    float windowW = windowRect.getW();
+    float windowH = windowRect.getH();
+    float windowDiagonal = std::sqrt(windowW * windowW + windowH * windowH);
     
     bool bWindowChanged = false;
     bWindowChanged = bWindowChanged || bWindowPosChanged;
@@ -206,33 +223,30 @@ void ScrollView::update(float timeDelta) {
     
     if(bDragging) {
 
-        float dragBoundsLimit = 100;
-        float contentDiff = 0;
-
-        if(contentPos.x < boundsPos0.x) {
+        if(contentPos.x > boundsPos1.x) { // beyond left bounds.
         
-            contentDiff = contentPos.x - boundsPos0.x;
-            contentDiff = coc::clamp(contentDiff, -dragBoundsLimit, 0);
-            contentPos.x = dragContentPos.x + contentDiff;
+            float dist = contentPos.x - boundsPos1.x;
+            dist = coc::map(dist, 0, windowDiagonal, 0, dragBoundsLimit.x, true);
+            contentPos.x = dragContentPos.x + dist;
             
-        } else if(contentPos.x > boundsPos1.x) {
+        } else if(contentPos.x < boundsPos0.x) { // beyond right bounds.
         
-            contentDiff = contentPos.x - boundsPos1.x;
-            contentDiff = coc::clamp(contentDiff, 0, dragBoundsLimit);
-            contentPos.x = dragContentPos.x + contentDiff;
+            float dist = contentPos.x - boundsPos0.x;
+            dist = coc::map(dist, 0, -windowDiagonal, 0, -dragBoundsLimit.x, true);
+            contentPos.x = dragContentPos.x + dist;
         }
+
+        if(contentPos.y > boundsPos1.y) { // beyond top bounds.
         
-        if(contentPos.y < boundsPos0.y) {
-        
-            contentDiff = contentPos.y - boundsPos0.y;
-            contentDiff = coc::clamp(contentDiff, -dragBoundsLimit, 0);
-            contentPos.y = dragContentPos.y + contentDiff;
+            float dist = contentPos.y - boundsPos1.y;
+            dist = coc::map(dist, 0, windowDiagonal, 0, dragBoundsLimit.y, true);
+            contentPos.y = dragContentPos.y + dist;
             
-        } else if(contentPos.y > boundsPos1.y) {
+        } else if(contentPos.y < boundsPos0.y) { // beyond bottom bounds.
         
-            contentDiff = contentPos.y - boundsPos1.y;
-            contentDiff = coc::clamp(contentDiff, 0, dragBoundsLimit);
-            contentPos.y = dragContentPos.y + contentDiff;
+            float dist = contentPos.y - boundsPos0.y;
+            dist = coc::map(dist, 0, -windowDiagonal, 0, -dragBoundsLimit.y, true);
+            contentPos.y = dragContentPos.y + dist;
         }
 
     } else {
