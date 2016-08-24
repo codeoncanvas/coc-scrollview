@@ -225,28 +225,32 @@ void ScrollView::update(float timeDelta) {
 
         if(contentPos.x > boundsPos1.x) { // beyond left bounds.
         
-            float dist = contentPos.x - boundsPos1.x;
-            dist = coc::map(dist, 0, windowDiagonal, 0, dragBoundsLimit.x, true);
-            contentPos.x = dragContentPos.x + dist;
+            float dragBeyondBounds = contentPos.x - boundsPos1.x;
+            float dragOffset = dragDist.x - dragBeyondBounds;
+            dragBeyondBounds = coc::map(dragBeyondBounds, 0, windowDiagonal, 0, dragBoundsLimit.x, true);
+            contentPos.x = dragContentPos.x + dragOffset + dragBeyondBounds;
             
         } else if(contentPos.x < boundsPos0.x) { // beyond right bounds.
         
-            float dist = contentPos.x - boundsPos0.x;
-            dist = coc::map(dist, 0, -windowDiagonal, 0, -dragBoundsLimit.x, true);
-            contentPos.x = dragContentPos.x + dist;
+            float dragBeyondBounds = contentPos.x - boundsPos0.x;
+            float dragOffset = dragDist.x - dragBeyondBounds;
+            dragBeyondBounds = coc::map(dragBeyondBounds, 0, -windowDiagonal, 0, -dragBoundsLimit.x, true);
+            contentPos.x = dragContentPos.x + dragOffset + dragBeyondBounds;
         }
 
         if(contentPos.y > boundsPos1.y) { // beyond top bounds.
         
-            float dist = contentPos.y - boundsPos1.y;
-            dist = coc::map(dist, 0, windowDiagonal, 0, dragBoundsLimit.y, true);
-            contentPos.y = dragContentPos.y + dist;
+            float dragBeyondBounds = contentPos.y - boundsPos1.y;
+            float dragOffset = dragDist.y - dragBeyondBounds;
+            dragBeyondBounds = coc::map(dragBeyondBounds, 0, windowDiagonal, 0, dragBoundsLimit.y, true);
+            contentPos.y = dragContentPos.y + dragOffset + dragBeyondBounds;
             
         } else if(contentPos.y < boundsPos0.y) { // beyond bottom bounds.
         
-            float dist = contentPos.y - boundsPos0.y;
-            dist = coc::map(dist, 0, -windowDiagonal, 0, -dragBoundsLimit.y, true);
-            contentPos.y = dragContentPos.y + dist;
+            float dragBeyondBounds = contentPos.y - boundsPos0.y;
+            float dragOffset = dragDist.y - dragBeyondBounds;
+            dragBeyondBounds = coc::map(dragBeyondBounds, 0, -windowDiagonal, 0, -dragBoundsLimit.y, true);
+            contentPos.y = dragContentPos.y + dragOffset + dragBeyondBounds;
         }
 
     } else {
