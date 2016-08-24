@@ -223,6 +223,11 @@ void ScrollView::update(float timeDelta) {
     
     if(bDragging) {
 
+        // when dragging past the bounds,
+        // the below code performs an ios style drag mechanic.
+        // it allows the content to be dragged slightly past the bounds,
+        // to a limit set in the dragBoundsLimit.
+
         if(contentPos.x > boundsPos1.x) { // beyond left bounds.
         
             float dragBeyondBounds = contentPos.x - boundsPos1.x;
@@ -254,6 +259,10 @@ void ScrollView::update(float timeDelta) {
         }
 
     } else {
+    
+        // when the user stops dragging,
+        // the below code ensures that if the content is out of bounds,
+        // it moves the content back into the bounds with an easing value set in bounceEasing.
         
         glm::vec2 contentTargetPos;
         contentTargetPos.x = coc::clamp(contentPos.x, boundsPos0.x, boundsPos1.x);
