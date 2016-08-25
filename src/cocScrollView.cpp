@@ -95,6 +95,36 @@ coc::Rect ScrollView::getContentRect() const {
 }
 
 //--------------------------------------------------------------
+void ScrollView::setScrollToFitWindow(float time) {
+    commands.push_back( Command::create() );
+    commands.back()->type = Command::Type::WindowFit;
+    commands.back()->timeTotal = time;
+}
+
+void ScrollView::setScrollToFillWindow(float time) {
+    commands.push_back( Command::create() );
+    commands.back()->type = Command::Type::WindowFill;
+    commands.back()->timeTotal = time;
+}
+
+const glm::vec2 & ScrollView::getScrollPos() const {
+    return scrollPos;
+}
+
+const glm::vec2 & ScrollView::getScrollSize() const {
+    return scrollSize;
+}
+
+coc::Rect ScrollView::getScrollRect() const {
+    coc::Rect rect;
+    rect.setX(scrollPos.x);
+    rect.setY(scrollPos.y);
+    rect.setW(scrollSize.x);
+    rect.setH(scrollSize.y);
+    return rect;
+}
+
+//--------------------------------------------------------------
 void ScrollView::setDragVelocityDecay(float value) {
     setDragVelocityDecay(glm::vec2(value, value));
 }
@@ -201,6 +231,21 @@ void ScrollView::update(float timeDelta) {
     
     for(int i=0; i<buttons.size(); i++) {
         buttons[i]->update();
+    }
+    
+    //---------------------------------------------------------- commands.
+    if(commands.size() > 0) {
+        command = commands.back();
+        commands.clear();
+        
+        if(command->type == Command::Type::WindowFit) {
+        
+            //
+        
+        } else if(command->type == Command::Type::WindowFill) {
+        
+            //
+        }
     }
     
     //---------------------------------------------------------- drag.

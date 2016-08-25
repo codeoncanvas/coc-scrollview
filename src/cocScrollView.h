@@ -11,13 +11,46 @@
 
 namespace coc {
 
+//--------------------------------------------------------------
 class ScrollView;
 typedef std::shared_ptr<ScrollView> ScrollViewRef;
 
 class ScrollView {
     
 public:
+
+    //----------------------------------------------------------
+    class Command;
+    typedef std::shared_ptr<Command> CommandRef;
     
+    class Command {
+    public:
+        static CommandRef create() { return CommandRef(new Command()); }
+        
+        enum Type {
+            WindowFit=0,
+            WindowFill
+        };
+        
+        Command():
+        time(0),
+        timeTotal(0),
+        progress(0) {
+            //
+        }
+
+        Type type;
+        glm::vec2 scrollPos;
+        glm::vec2 scrollSize;
+        glm::vec2 scrollTargetPos;
+        glm::vec2 scrollTargetSize;
+        glm::vec2 contentTransformPos;
+        float time;
+        float timeTotal;
+        float progress;
+    };
+
+    //----------------------------------------------------------
     ScrollView();
     ~ScrollView();
     
@@ -38,6 +71,12 @@ public:
     const glm::vec2 & getContentPos() const;
     const glm::vec2 & getContentSize() const;
     coc::Rect getContentRect() const;
+    
+    void setScrollToFitWindow(float time=0);
+    void setScrollToFillWindow(float time=0);
+    const glm::vec2 & getScrollPos() const;
+    const glm::vec2 & getScrollSize() const;
+    coc::Rect getScrollRect() const;
     
     void setMaxNumOfTouchPoints(unsigned int value) { numOfButtons = value; }
     
@@ -95,6 +134,9 @@ protected:
     
     glm::vec2 scrollPos;
     glm::vec2 scrollSize;
+    
+    std::vector<CommandRef> commands;
+    CommandRef command;
 
     glm::vec2 dragScrollPos;
     glm::vec2 dragDownPos;
