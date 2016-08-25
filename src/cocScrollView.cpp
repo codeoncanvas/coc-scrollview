@@ -16,6 +16,7 @@ ScrollView::ScrollView() :
 numOfButtons(10),
 bWindowPosChanged(false),
 bWindowSizeChanged(false),
+bContentPosChanged(false),
 bContentSizeChanged(false),
 dragVelDecay(0.9, 0.9),
 dragBoundsLimit(100, 100),
@@ -62,9 +63,13 @@ coc::Rect ScrollView::getWindowRect() const {
 }
 
 //--------------------------------------------------------------
+void ScrollView::setContentPos(const glm::vec2 & value) {
+    bContentPosChanged = (contentPos != value);
+    contentPos = value;
+}
+
 void ScrollView::setContentSize(const glm::vec2 & value) {
-    bContentSizeChanged = (contentInitSize != value);
-    contentInitSize = value;
+    bContentSizeChanged = (contentSize != value);
     contentSize = value;
 }
 
@@ -72,8 +77,21 @@ void ScrollView::setContentRect(const coc::Rect & value) {
     setContentSize(glm::vec2(value.getW(), value.getH()));
 }
 
+const glm::vec2 & ScrollView::getContentPos() const {
+    return contentPos;
+}
+
 const glm::vec2 & ScrollView::getContentSize() const {
-    return contentInitSize;
+    return contentSize;
+}
+
+coc::Rect ScrollView::getContentRect() const {
+    coc::Rect rect;
+    rect.setX(contentPos.x);
+    rect.setY(contentPos.y);
+    rect.setW(contentSize.x);
+    rect.setH(contentSize.y);
+    return rect;
 }
 
 //--------------------------------------------------------------
@@ -153,6 +171,15 @@ void ScrollView::update(float timeDelta) {
     bool bWindowChanged = false;
     bWindowChanged = bWindowChanged || bWindowPosChanged;
     bWindowChanged = bWindowChanged || bWindowSizeChanged;
+    
+    if(bContentSizeChanged) {
+        
+        // when content changes,
+        // reset the scroll size and position to default.
+    
+        scrollSize = contentSize;
+        scrollPos = glm::vec2(0, 0);
+    }
 
     //---------------------------------------------------------- buttons.
     bool bNumOfButtonsChanged = (buttons.size() != numOfButtons);
@@ -180,7 +207,7 @@ void ScrollView::update(float timeDelta) {
     for(int i=0; i<buttons.size(); i++) {
         if(buttons[i]->pressedInside()) {
             dragButton = buttons[i];
-            dragContentPos = contentPos;
+            dragScrollPos = scrollPos;
             dragDownPos = dragMovePos = dragMovePosPrev = dragButton->getPointPosLast();
             dragVel = glm::vec2(0, 0);
         }
@@ -201,7 +228,7 @@ void ScrollView::update(float timeDelta) {
             dragButton = nullptr;
         }
         
-        contentPos = dragContentPos + dragDist;
+        scrollPos = dragScrollPos + dragDist;
         
     } else {
     
@@ -213,12 +240,12 @@ void ScrollView::update(float timeDelta) {
             dragVel.y = 0;
         }
         
-        contentPos += dragVel;
+        scrollPos += dragVel;
     }
 
     //---------------------------------------------------------- contain to bounds.
-    glm::vec2 boundsPos0(coc::min(windowSize.x - contentSize.x, 0),
-                         coc::min(windowSize.y - contentSize.y, 0));
+    glm::vec2 boundsPos0(coc::min(windowSize.x - scrollSize.x, 0),
+                         coc::min(windowSize.y - scrollSize.y, 0));
     glm::vec2 boundsPos1(0, 0);
     
     if(bDragging) {
@@ -228,34 +255,34 @@ void ScrollView::update(float timeDelta) {
         // it allows the content to be dragged slightly past the bounds,
         // to a limit set in the dragBoundsLimit.
 
-        if(contentPos.x > boundsPos1.x) { // beyond left bounds.
+        if(scrollPos.x > boundsPos1.x) { // beyond left bounds.
         
-            float dragBeyondBounds = contentPos.x - boundsPos1.x;
+            float dragBeyondBounds = scrollPos.x - boundsPos1.x;
             float dragOffset = dragDist.x - dragBeyondBounds;
             dragBeyondBounds = coc::map(dragBeyondBounds, 0, windowDiagonal, 0, dragBoundsLimit.x, true);
-            contentPos.x = dragContentPos.x + dragOffset + dragBeyondBounds;
+            scrollPos.x = dragScrollPos.x + dragOffset + dragBeyondBounds;
             
-        } else if(contentPos.x < boundsPos0.x) { // beyond right bounds.
+        } else if(scrollPos.x < boundsPos0.x) { // beyond right bounds.
         
-            float dragBeyondBounds = contentPos.x - boundsPos0.x;
+            float dragBeyondBounds = scrollPos.x - boundsPos0.x;
             float dragOffset = dragDist.x - dragBeyondBounds;
             dragBeyondBounds = coc::map(dragBeyondBounds, 0, -windowDiagonal, 0, -dragBoundsLimit.x, true);
-            contentPos.x = dragContentPos.x + dragOffset + dragBeyondBounds;
+            scrollPos.x = dragScrollPos.x + dragOffset + dragBeyondBounds;
         }
 
-        if(contentPos.y > boundsPos1.y) { // beyond top bounds.
+        if(scrollPos.y > boundsPos1.y) { // beyond top bounds.
         
-            float dragBeyondBounds = contentPos.y - boundsPos1.y;
+            float dragBeyondBounds = scrollPos.y - boundsPos1.y;
             float dragOffset = dragDist.y - dragBeyondBounds;
             dragBeyondBounds = coc::map(dragBeyondBounds, 0, windowDiagonal, 0, dragBoundsLimit.y, true);
-            contentPos.y = dragContentPos.y + dragOffset + dragBeyondBounds;
+            scrollPos.y = dragScrollPos.y + dragOffset + dragBeyondBounds;
             
-        } else if(contentPos.y < boundsPos0.y) { // beyond bottom bounds.
+        } else if(scrollPos.y < boundsPos0.y) { // beyond bottom bounds.
         
-            float dragBeyondBounds = contentPos.y - boundsPos0.y;
+            float dragBeyondBounds = scrollPos.y - boundsPos0.y;
             float dragOffset = dragDist.y - dragBeyondBounds;
             dragBeyondBounds = coc::map(dragBeyondBounds, 0, -windowDiagonal, 0, -dragBoundsLimit.y, true);
-            contentPos.y = dragContentPos.y + dragOffset + dragBeyondBounds;
+            scrollPos.y = dragScrollPos.y + dragOffset + dragBeyondBounds;
         }
 
     } else {
@@ -265,26 +292,28 @@ void ScrollView::update(float timeDelta) {
         // it moves the content back into the bounds with an easing value set in bounceEasing.
         
         glm::vec2 contentTargetPos;
-        contentTargetPos.x = coc::clamp(contentPos.x, boundsPos0.x, boundsPos1.x);
-        contentTargetPos.y = coc::clamp(contentPos.y, boundsPos0.y, boundsPos1.y);
+        contentTargetPos.x = coc::clamp(scrollPos.x, boundsPos0.x, boundsPos1.x);
+        contentTargetPos.y = coc::clamp(scrollPos.y, boundsPos0.y, boundsPos1.y);
         
-        contentPos += (contentTargetPos - contentPos) * bounceEasing;
-        if(coc::abs(contentPos.x - contentTargetPos.x) < kEasingStop) {
-            contentPos.x = contentTargetPos.x;
+        scrollPos += (contentTargetPos - scrollPos) * bounceEasing;
+        if(coc::abs(scrollPos.x - contentTargetPos.x) < kEasingStop) {
+            scrollPos.x = contentTargetPos.x;
         }
-        if(coc::abs(contentPos.y - contentTargetPos.y) < kEasingStop) {
-            contentPos.y = contentTargetPos.y;
+        if(coc::abs(scrollPos.y - contentTargetPos.y) < kEasingStop) {
+            scrollPos.y = contentTargetPos.y;
         }
     }
     
     //---------------------------------------------------------- model matrix.
-    float modelMatrixScale = contentSize.x / contentInitSize.x;
-    modelMatrix = glm::translate(glm::vec3(windowPos.x + contentPos.x, windowPos.y + contentPos.y, 0.0));
+    float modelMatrixScale = scrollSize.x / contentSize.x;
+    modelMatrix = glm::translate(glm::vec3(windowPos.x + scrollPos.x, windowPos.y + scrollPos.y, 0.0));
     modelMatrix = glm::scale(modelMatrix, glm::vec3(modelMatrixScale, modelMatrixScale, 1.0));
     
     //---------------------------------------------------------- flags.
     bWindowPosChanged = false;
     bWindowSizeChanged = false;
+    bContentPosChanged = false;
+    bContentSizeChanged = false;
 }
 
 //--------------------------------------------------------------

@@ -32,9 +32,12 @@ public:
     const glm::vec2 & getWindowSize() const;
     coc::Rect getWindowRect() const;
     
+    void setContentPos(const glm::vec2 & value);
     void setContentSize(const glm::vec2 & value);
     void setContentRect(const coc::Rect & value);
+    const glm::vec2 & getContentPos() const;
     const glm::vec2 & getContentSize() const;
+    coc::Rect getContentRect() const;
     
     void setMaxNumOfTouchPoints(unsigned int value) { numOfButtons = value; }
     
@@ -78,6 +81,7 @@ protected:
     
     unsigned int numOfButtons;
     std::vector<coc::ButtonRef> buttons;
+    coc::ButtonRef dragButton;
     
     glm::vec2 windowPos;
     glm::vec2 windowSize;
@@ -86,11 +90,13 @@ protected:
     
     glm::vec2 contentPos;
     glm::vec2 contentSize;
-    glm::vec2 contentInitSize;
+    bool bContentPosChanged;
     bool bContentSizeChanged;
+    
+    glm::vec2 scrollPos;
+    glm::vec2 scrollSize;
 
-    coc::ButtonRef dragButton;
-    glm::vec2 dragContentPos;
+    glm::vec2 dragScrollPos;
     glm::vec2 dragDownPos;
     glm::vec2 dragMovePos;
     glm::vec2 dragMovePosPrev;
