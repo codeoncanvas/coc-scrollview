@@ -50,7 +50,8 @@ public:
         
         enum Type {
             WindowFit=0,
-            WindowFill
+            WindowFill,
+            DoubleTapZoom
         };
         
         Action():
@@ -65,7 +66,7 @@ public:
         glm::vec2 scrollStartSize;
         glm::vec2 scrollFinishPos;
         glm::vec2 scrollFinishSize;
-        glm::vec2 contentTransformPoint;
+        glm::vec2 windowHitPoint;
         float time;
         float timeTotal;
         float progress;
@@ -147,8 +148,9 @@ protected:
     std::vector<ButtonRef> buttons;
     ButtonRef buttonDrag;
     ButtonRef buttonDoubleTap;
-    float doubleTapTimeLimit = 0.25;
-    float doubleTapDistLimit = 22;
+    float doubleTapTimeLimit;
+    float doubleTapDistLimit;
+    float doubleTapZoomTime;
     bool bEnabled;
     bool bEnabledChanged;
     

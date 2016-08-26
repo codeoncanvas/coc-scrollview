@@ -52,11 +52,14 @@ void Grid::draw() {
 
 	for(int yi=0; yi<countY; yi++) {
 		for(int xi=0; xi<countX; xi++) {
+        
             int i = (yi * countX) + xi;
             int x = xi * sizeX;
             int y = yi * sizeY;
             
-            //gl::drawString(toString(i), glm::vec2(x + 10, y + 20), ci::ColorA(0, 0, 0, 1));
+            continue; // TEMP.
+            
+            gl::drawString(toString(i), glm::vec2(x + 10, y + 20), ci::ColorA(0, 0, 0, 1));
 		}
 	}
 

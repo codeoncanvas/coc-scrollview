@@ -16,6 +16,7 @@ ScrollView::ScrollView() :
 numOfButtons(10),
 doubleTapTimeLimit(0.25),
 doubleTapDistLimit(22),
+doubleTapZoomTime(0.5),
 bEnabled(true),
 bEnabledChanged(false),
 bWindowPosChanged(false),
@@ -360,8 +361,11 @@ void ScrollView::update(float timeDelta) {
     }
     
     if(bDoubleTapStart) {
-    
-        std::cout << "bDoubleTapStart" << std::endl;
+        actions.push_back( Action::create() );
+        actions.back()->type = Action::Type::DoubleTapZoom;
+        actions.back()->timeTotal = doubleTapZoomTime;
+        actions.back()->windowHitPoint.x = buttonDoubleTapPos.x - windowPos.x;
+        actions.back()->windowHitPoint.y = buttonDoubleTapPos.y - windowPos.y;
     }
     
     if(actions.size() > 0) {
@@ -389,6 +393,76 @@ void ScrollView::update(float timeDelta) {
             action->scrollFinishSize.x = scrollRect.getW();
             action->scrollFinishSize.y = scrollRect.getH();
         }
+        
+        bool bDoubleTapZoom = false;
+        bDoubleTapZoom = bDoubleTapZoom || (action->type == Action::Type::DoubleTapZoom);
+        if(bDoubleTapZoom) {
+
+            action->scrollStartPos = scrollPos;
+            action->scrollStartSize = scrollSize;
+            
+            float scrollScale = scrollSize.x / contentSize.x;
+            if(scrollScale == 1.0) {
+
+                coc::Rect windowSizeRect;
+                windowSizeRect.setW(windowSize.x);
+                windowSizeRect.setH(windowSize.y);
+                coc::Rect scrollRect = contentRect;
+                scrollRect.fitInto(windowSizeRect, false);
+                
+                action->scrollFinishPos.x = scrollRect.getX();
+                action->scrollFinishPos.y = scrollRect.getY();
+                action->scrollFinishSize.x = scrollRect.getW();
+                action->scrollFinishSize.y = scrollRect.getH();
+            
+            } else {
+            
+                float zoomScale = 1.0;
+            
+                const glm::vec2 & windowPoint = action->windowHitPoint;
+                glm::vec2 contentPoint;
+                contentPoint.x = coc::map(windowPoint.x, scrollPos.x, scrollPos.x + scrollSize.x, 0, contentSize.x, true);
+                contentPoint.y = coc::map(windowPoint.y, scrollPos.y, scrollPos.y + scrollSize.y, 0, contentSize.x, true);
+                
+                glm::vec2 p0(0, 0);
+                glm::vec2 p1(contentSize.x, contentSize.y);
+                p0 -= contentPoint;
+                p1 -= contentPoint;
+                p0 *= zoomScale;
+                p1 *= zoomScale;
+                p0 += windowPoint;
+                p1 += windowPoint;
+                
+                glm::vec2 boundsPos0(windowSize.x - scrollSize.x,
+                                     windowSize.y - scrollSize.y);
+                glm::vec2 boundsPos1(0, 0);
+                
+                if(scrollSize.x < windowSize.x) {
+                    boundsPos0.x = boundsPos1.x = (windowSize.x - scrollSize.x) * 0.5;
+                }
+                if(scrollSize.y < windowSize.y) {
+                    boundsPos0.y = boundsPos1.y = (windowSize.y - scrollSize.y) * 0.5;
+                }
+                
+                glm::vec2 scrollFinishPos = p0;
+                glm::vec2 scrollFinishSize = p1 - p0;
+                
+//                if(scrollFinishPos.x > boundsPos1.x) { // beyond left bounds.
+//                    scrollFinishPos.x = boundsPos1.x;
+//                } else if(scrollFinishPos.x < boundsPos0.x) { // beyond right bounds.
+//                    scrollFinishPos.x = boundsPos0.x;
+//                }
+//
+//                if(scrollFinishPos.y > boundsPos1.y) { // beyond top bounds.
+//                    scrollFinishPos.y = boundsPos1.y;
+//                } else if(scrollFinishPos.y < boundsPos0.y) { // beyond bottom bounds.
+//                    scrollFinishPos.y = boundsPos0.y;
+//                }
+
+                action->scrollFinishPos = scrollFinishPos;
+                action->scrollFinishSize = scrollFinishSize;
+            }
+        }
     }
     
     bool bActioning = (action != nullptr);
@@ -412,73 +486,78 @@ void ScrollView::update(float timeDelta) {
     }
 
     //---------------------------------------------------------- contain to bounds.
-    glm::vec2 boundsPos0(windowSize.x - scrollSize.x,
-                         windowSize.y - scrollSize.y);
-    glm::vec2 boundsPos1(0, 0);
-    
-    // when the scroll size is smaller then the window size,
-    // center the scroll view in the middle of the window.
-    
-    if(scrollSize.x < windowSize.x) {
-        boundsPos0.x = boundsPos1.x = (windowSize.x - scrollSize.x) * 0.5;
-    }
-    if(scrollSize.y < windowSize.y) {
-        boundsPos0.y = boundsPos1.y = (windowSize.y - scrollSize.y) * 0.5;
-    }
-    
-    if(bDragging) {
+    bool bContainToBounds = true;
+    bContainToBounds = bContainToBounds && (bActioning == false);
+    if(bContainToBounds) {
 
-        // when dragging past the bounds,
-        // the below code performs an ios style drag mechanic.
-        // it allows the content to be dragged slightly past the bounds,
-        // to a limit set in the dragBoundsLimit.
-
-        if(scrollPos.x > boundsPos1.x) { // beyond left bounds.
+        glm::vec2 boundsPos0(windowSize.x - scrollSize.x,
+                             windowSize.y - scrollSize.y);
+        glm::vec2 boundsPos1(0, 0);
         
-            float dragBeyondBounds = scrollPos.x - boundsPos1.x;
-            float dragOffset = dragDist.x - dragBeyondBounds;
-            dragBeyondBounds = coc::map(dragBeyondBounds, 0, windowDiagonal, 0, windowDiagonal * dragBoundsLimit.x, true);
-            scrollPos.x = dragScrollPos.x + dragOffset + dragBeyondBounds;
+        // when the scroll size is smaller then the window size,
+        // center the scroll view in the middle of the window.
+        
+        if(scrollSize.x < windowSize.x) {
+            boundsPos0.x = boundsPos1.x = (windowSize.x - scrollSize.x) * 0.5;
+        }
+        if(scrollSize.y < windowSize.y) {
+            boundsPos0.y = boundsPos1.y = (windowSize.y - scrollSize.y) * 0.5;
+        }
+        
+        if(bDragging) {
+
+            // when dragging past the bounds,
+            // the below code performs an ios style drag mechanic.
+            // it allows the content to be dragged slightly past the bounds,
+            // to a limit set in the dragBoundsLimit.
+
+            if(scrollPos.x > boundsPos1.x) { // beyond left bounds.
             
-        } else if(scrollPos.x < boundsPos0.x) { // beyond right bounds.
-        
-            float dragBeyondBounds = scrollPos.x - boundsPos0.x;
-            float dragOffset = dragDist.x - dragBeyondBounds;
-            dragBeyondBounds = coc::map(dragBeyondBounds, 0, -windowDiagonal, 0, -windowDiagonal * dragBoundsLimit.x, true);
-            scrollPos.x = dragScrollPos.x + dragOffset + dragBeyondBounds;
-        }
-
-        if(scrollPos.y > boundsPos1.y) { // beyond top bounds.
-        
-            float dragBeyondBounds = scrollPos.y - boundsPos1.y;
-            float dragOffset = dragDist.y - dragBeyondBounds;
-            dragBeyondBounds = coc::map(dragBeyondBounds, 0, windowDiagonal, 0, windowDiagonal * dragBoundsLimit.y, true);
-            scrollPos.y = dragScrollPos.y + dragOffset + dragBeyondBounds;
+                float dragBeyondBounds = scrollPos.x - boundsPos1.x;
+                float dragOffset = dragDist.x - dragBeyondBounds;
+                dragBeyondBounds = coc::map(dragBeyondBounds, 0, windowDiagonal, 0, windowDiagonal * dragBoundsLimit.x, true);
+                scrollPos.x = dragScrollPos.x + dragOffset + dragBeyondBounds;
+                
+            } else if(scrollPos.x < boundsPos0.x) { // beyond right bounds.
             
-        } else if(scrollPos.y < boundsPos0.y) { // beyond bottom bounds.
-        
-            float dragBeyondBounds = scrollPos.y - boundsPos0.y;
-            float dragOffset = dragDist.y - dragBeyondBounds;
-            dragBeyondBounds = coc::map(dragBeyondBounds, 0, -windowDiagonal, 0, -windowDiagonal * dragBoundsLimit.y, true);
-            scrollPos.y = dragScrollPos.y + dragOffset + dragBeyondBounds;
-        }
+                float dragBeyondBounds = scrollPos.x - boundsPos0.x;
+                float dragOffset = dragDist.x - dragBeyondBounds;
+                dragBeyondBounds = coc::map(dragBeyondBounds, 0, -windowDiagonal, 0, -windowDiagonal * dragBoundsLimit.x, true);
+                scrollPos.x = dragScrollPos.x + dragOffset + dragBeyondBounds;
+            }
 
-    } else {
-    
-        // when the user stops dragging,
-        // the below code ensures that if the content is out of bounds,
-        // it moves the content back into the bounds with an easing value set in bounceEasing.
+            if(scrollPos.y > boundsPos1.y) { // beyond top bounds.
+            
+                float dragBeyondBounds = scrollPos.y - boundsPos1.y;
+                float dragOffset = dragDist.y - dragBeyondBounds;
+                dragBeyondBounds = coc::map(dragBeyondBounds, 0, windowDiagonal, 0, windowDiagonal * dragBoundsLimit.y, true);
+                scrollPos.y = dragScrollPos.y + dragOffset + dragBeyondBounds;
+                
+            } else if(scrollPos.y < boundsPos0.y) { // beyond bottom bounds.
+            
+                float dragBeyondBounds = scrollPos.y - boundsPos0.y;
+                float dragOffset = dragDist.y - dragBeyondBounds;
+                dragBeyondBounds = coc::map(dragBeyondBounds, 0, -windowDiagonal, 0, -windowDiagonal * dragBoundsLimit.y, true);
+                scrollPos.y = dragScrollPos.y + dragOffset + dragBeyondBounds;
+            }
+
+        } else {
         
-        glm::vec2 contentTargetPos;
-        contentTargetPos.x = coc::clamp(scrollPos.x, boundsPos0.x, boundsPos1.x);
-        contentTargetPos.y = coc::clamp(scrollPos.y, boundsPos0.y, boundsPos1.y);
-        
-        scrollPos += (contentTargetPos - scrollPos) * bounceEasing;
-        if(coc::abs(scrollPos.x - contentTargetPos.x) < kEasingStop) {
-            scrollPos.x = contentTargetPos.x;
-        }
-        if(coc::abs(scrollPos.y - contentTargetPos.y) < kEasingStop) {
-            scrollPos.y = contentTargetPos.y;
+            // when the user stops dragging,
+            // the below code ensures that if the content is out of bounds,
+            // it moves the content back into the bounds with an easing value set in bounceEasing.
+            
+            glm::vec2 contentTargetPos;
+            contentTargetPos.x = coc::clamp(scrollPos.x, boundsPos0.x, boundsPos1.x);
+            contentTargetPos.y = coc::clamp(scrollPos.y, boundsPos0.y, boundsPos1.y);
+            
+            scrollPos += (contentTargetPos - scrollPos) * bounceEasing;
+            if(coc::abs(scrollPos.x - contentTargetPos.x) < kEasingStop) {
+                scrollPos.x = contentTargetPos.x;
+            }
+            if(coc::abs(scrollPos.y - contentTargetPos.y) < kEasingStop) {
+                scrollPos.y = contentTargetPos.y;
+            }
         }
     }
     

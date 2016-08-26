@@ -63,6 +63,8 @@ void ScrollViewSampleApp::setup() {
 //	scrollView->setDoubleTapZoomIncrementTimeInSec(0.3); // the time amount of time for zoom increment.
 //	scrollView->setDoubleTapRegistrationTimeInSec(0.25); // the time threshold between taps for double tap event to register.
 //	scrollView->setDoubleTapRegistrationDistanceInPixels(20); // the distance threshold between taps for double tap event to register.
+
+    scrollView->setScrollToFitWindow();
 }
 
 void ScrollViewSampleApp::update() {
