@@ -320,9 +320,19 @@ void ScrollView::update(float timeDelta) {
     }
 
     //---------------------------------------------------------- contain to bounds.
-    glm::vec2 boundsPos0(coc::min(windowSize.x - scrollSize.x, 0),
-                         coc::min(windowSize.y - scrollSize.y, 0));
+    glm::vec2 boundsPos0(windowSize.x - scrollSize.x,
+                         windowSize.y - scrollSize.y);
     glm::vec2 boundsPos1(0, 0);
+    
+    // when the scroll size is smaller then the window size,
+    // center the scroll view in the middle of the window.
+    
+    if(scrollSize.x < windowSize.x) {
+        boundsPos0.x = boundsPos1.x = (windowSize.x - scrollSize.x) * 0.5;
+    }
+    if(scrollSize.y < windowSize.y) {
+        boundsPos0.y = boundsPos1.y = (windowSize.y - scrollSize.y) * 0.5;
+    }
     
     if(bDragging) {
 
