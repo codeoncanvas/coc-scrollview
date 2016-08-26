@@ -20,6 +20,27 @@ class ScrollView {
 public:
 
     //----------------------------------------------------------
+    class Button;
+    typedef std::shared_ptr<Button> ButtonRef;
+    
+    class Button {
+    public:
+        static ButtonRef create() { return ButtonRef(new Button()); }
+    
+        Button():
+        timeSinceLastPress(0),
+        posOfLastPress(0, 0),
+        bDoubleTapOnLastPress(false) {
+            //
+        }
+        
+        coc::ButtonRef button;
+        float timeSinceLastPress;
+        glm::vec2 posOfLastPress;
+        bool bDoubleTapOnLastPress;
+    };
+
+    //----------------------------------------------------------
     class Action;
     typedef std::shared_ptr<Action> ActionRef;
     
@@ -123,8 +144,11 @@ protected:
 	virtual void end() {}
     
     unsigned int numOfButtons;
-    std::vector<coc::ButtonRef> buttons;
-    coc::ButtonRef dragButton;
+    std::vector<ButtonRef> buttons;
+    ButtonRef buttonDrag;
+    ButtonRef buttonDoubleTap;
+    float doubleTapTimeLimit = 0.25;
+    float doubleTapDistLimit = 22;
     bool bEnabled;
     bool bEnabledChanged;
     

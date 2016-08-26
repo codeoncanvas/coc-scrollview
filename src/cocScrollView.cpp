@@ -14,6 +14,8 @@ static float const kEasingStop = 0.001;
 //--------------------------------------------------------------
 ScrollView::ScrollView() :
 numOfButtons(10),
+doubleTapTimeLimit(0.25),
+doubleTapDistLimit(22),
 bEnabled(true),
 bEnabledChanged(false),
 bWindowPosChanged(false),
@@ -231,7 +233,8 @@ void ScrollView::update(float timeDelta) {
     if(bNumOfButtonsChanged) {
         buttons.clear();
         for(int i=0; i<numOfButtons; i++) {
-            buttons.push_back( initButton() );
+            buttons.push_back( Button::create() );
+            buttons.back()->button = initButton();
         }
     }
     
@@ -240,7 +243,7 @@ void ScrollView::update(float timeDelta) {
     bUpdateButtonRect = bUpdateButtonRect || bWindowChanged;
     if(bUpdateButtonRect) {
         for(int i=0; i<buttons.size(); i++) {
-            buttons[i]->setRect(windowRect);
+            buttons[i]->button->setRect(windowRect);
         }
     }
     
@@ -249,44 +252,91 @@ void ScrollView::update(float timeDelta) {
     bUpdateButtonEnabled = bUpdateButtonEnabled || bEnabledChanged;
     if(bUpdateButtonEnabled) {
         for(int i=0; i<buttons.size(); i++) {
-            buttons[i]->setEnabled(bEnabled);
-            buttons[i]->reset();
+            buttons[i]->button->setEnabled(bEnabled);
+            buttons[i]->button->reset();
+        }
+    }
+
+    bool bDragging = false;
+    bool bDragStart = false;
+    bool bDragFinish = false;
+    bool bDoubleTapStart = false;
+    glm::vec2 buttonDragPos;
+    glm::vec2 buttonDoubleTapPos;
+    
+    for(int i=0; i<buttons.size(); i++) {
+        const ButtonRef & buttonRef = buttons[i];
+        buttonRef->button->update();
+        buttonRef->timeSinceLastPress += timeDelta;
+        
+        bool bPressed = buttonRef->button->pressedInside();
+        if(bPressed) {
+
+            float timeSinceLastPress = buttonRef->timeSinceLastPress;
+            const glm::vec2 & posOfLastPress = buttonRef->posOfLastPress;
+            const glm::vec2 & posOfThisPress = buttonRef->button->getPointPosLast();
+            bool bDoubleTapOnLastPress = buttonRef->bDoubleTapOnLastPress;
+            
+            // double tap is registered when two quick presses are,
+            // 1. within a close time period of one another.
+            // 2. within a close position to one another.
+            // bDoubleTapOnLastPress - prevents a double tap firing twice on 3 quick presses.
+        
+            bool bDoubleTap = true;
+            bDoubleTap = bDoubleTap && (timeSinceLastPress < doubleTapTimeLimit);
+            bDoubleTap = bDoubleTap && (glm::length(posOfThisPress - posOfLastPress) < doubleTapDistLimit);
+            bDoubleTap = bDoubleTap && (bDoubleTapOnLastPress == false);
+            
+            buttonRef->timeSinceLastPress = 0;
+            buttonRef->posOfLastPress = buttonRef->button->getPointPosLast();
+            buttonRef->bDoubleTapOnLastPress = bDoubleTap;
+            
+            if(bDoubleTap) {
+                buttonDoubleTap = buttonRef;
+                bDoubleTapStart = true;
+            } else {
+                buttonDrag = buttonRef;
+                bDragStart = true;
+            }
+            
+            break;
+        }
+        
+        bool bReleased = false;
+        bReleased = bReleased || buttonRef->button->releasedInside();
+        bReleased = bReleased || buttonRef->button->releasedOutside();
+        if(bReleased) {
+            if(buttonDrag == buttonRef) {
+                bDragFinish = true;
+            }
         }
     }
     
-    for(int i=0; i<buttons.size(); i++) {
-        buttons[i]->update();
+    bDragging = (buttonDrag != nullptr);
+    if(bDragging) {
+        buttonDragPos = buttonDrag->button->getPointPosLast();
+        if(bDragFinish) {
+            buttonDrag = nullptr;
+        }
+    }
+    
+    if(bDoubleTapStart) {
+        buttonDoubleTapPos = buttonDoubleTap->button->getPointPosLast();
     }
     
     //---------------------------------------------------------- drag.
-    bool bDragging = false;
-    bool bDragStarted = false;
-    
-    for(int i=0; i<buttons.size(); i++) {
-        if(buttons[i]->pressedInside()) {
-            dragButton = buttons[i];
-            dragScrollPos = scrollPos;
-            dragDownPos = dragMovePos = dragMovePosPrev = dragButton->getPointPosLast();
-            dragVel = glm::vec2(0, 0);
-            bDragStarted = true;
-        }
+    if(bDragStart) {
+        dragScrollPos = scrollPos;
+        dragDownPos = dragMovePos = dragMovePosPrev = buttonDragPos;
+        dragVel = glm::vec2(0, 0);
     }
-    
-    bDragging = (dragButton != nullptr);
     
     if(bDragging) {
         
         dragMovePosPrev = dragMovePos;
-        dragMovePos = dragButton->getPointPosLast();
+        dragMovePos = buttonDragPos;
         dragDist = dragMovePos - dragDownPos;
         dragVel = dragMovePos - dragMovePosPrev;
-        
-        bool bDragReleased = false;
-        bDragReleased = bDragReleased || dragButton->releasedInside();
-        bDragReleased = bDragReleased || dragButton->releasedOutside();
-        if(bDragReleased) {
-            dragButton = nullptr;
-        }
         
         scrollPos = dragScrollPos + dragDist;
         
@@ -304,9 +354,14 @@ void ScrollView::update(float timeDelta) {
     }
     
     //---------------------------------------------------------- actions.
-    if(bDragStarted) {
+    if(bDragStart) {
         actions.clear();
         action = nullptr;
+    }
+    
+    if(bDoubleTapStart) {
+    
+        std::cout << "bDoubleTapStart" << std::endl;
     }
     
     if(actions.size() > 0) {
@@ -464,13 +519,13 @@ void ScrollView::pointNew(ButtonPoint::Type type, int x, int y, unsigned int poi
     for(int i=0; i<buttons.size(); i++) {
         if(i == pointID) {
             if(type == ButtonPoint::Type::Moved) {
-                buttons[i]->pointMoved(x, y);
+                buttons[i]->button->pointMoved(x, y);
             } else if(type == ButtonPoint::Type::Pressed) {
-                buttons[i]->pointPressed(x, y);
+                buttons[i]->button->pointPressed(x, y);
             } else if(type == ButtonPoint::Type::Dragged) {
-                buttons[i]->pointDragged(x, y);
+                buttons[i]->button->pointDragged(x, y);
             } else if(type == ButtonPoint::Type::Released) {
-                buttons[i]->pointReleased(x, y);
+                buttons[i]->button->pointReleased(x, y);
             }
             break;
         }
