@@ -54,6 +54,7 @@ void ScrollViewSampleApp::setup() {
 	scrollView->setScrollEasing(0.3); // smoothness of scrolling, between 0 and 1.
 	scrollView->setBounceEasing(0.2); // the speed of bounce back, between 0 and 1.
 	scrollView->setDragVelocityDecay(0.9); // the speed of decay of drag velocity after release, between 0 and 1.
+    scrollView->setDragBoundsLimit(0.1); // the limit on how far the content can be dragged outside of the bounds, between 0 and 1.
 //	scrollView->setUserInteraction((bUserInteractionManual == false)); // enable / disable mouse or touch interaction.
 
 //	scrollView->setDoubleTapZoom(true); // enable double tap zoom.

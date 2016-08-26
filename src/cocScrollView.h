@@ -40,10 +40,10 @@ public:
         }
 
         Type type;
-        glm::vec2 scrollPos;
-        glm::vec2 scrollSize;
-        glm::vec2 scrollTargetPos;
-        glm::vec2 scrollTargetSize;
+        glm::vec2 scrollStartPos;
+        glm::vec2 scrollStartSize;
+        glm::vec2 scrollFinishPos;
+        glm::vec2 scrollFinishSize;
         glm::vec2 contentTransformPos;
         float time;
         float timeTotal;
@@ -64,6 +64,7 @@ public:
     const glm::vec2 & getWindowPos() const;
     const glm::vec2 & getWindowSize() const;
     coc::Rect getWindowRect() const;
+    float getWindowDiagonal() const;
     
     void setContentPos(const glm::vec2 & value);
     void setContentSize(const glm::vec2 & value);

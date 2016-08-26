@@ -19,7 +19,7 @@ bWindowSizeChanged(false),
 bContentPosChanged(false),
 bContentSizeChanged(false),
 dragVelDecay(0.9, 0.9),
-dragBoundsLimit(100, 100),
+dragBoundsLimit(0.1, 0.1),
 scrollEasing(1.0, 1.0),
 bounceEasing(1.0, 1.0) {
     //
@@ -60,6 +60,10 @@ coc::Rect ScrollView::getWindowRect() const {
     rect.setW(windowSize.x);
     rect.setH(windowSize.y);
     return rect;
+}
+
+float ScrollView::getWindowDiagonal() const {
+    return std::sqrt(windowSize.x * windowSize.x + windowSize.y * windowSize.y);
 }
 
 //--------------------------------------------------------------
@@ -195,9 +199,7 @@ void ScrollView::update(float timeDelta) {
 
     coc::Rect contentRect = getContentRect();
     coc::Rect windowRect = getWindowRect();
-    float windowW = windowRect.getW();
-    float windowH = windowRect.getH();
-    float windowDiagonal = std::sqrt(windowW * windowW + windowH * windowH);
+    float windowDiagonal = getWindowDiagonal();
     
     bool bWindowChanged = false;
     bWindowChanged = bWindowChanged || bWindowPosChanged;
@@ -245,16 +247,16 @@ void ScrollView::update(float timeDelta) {
         
         } else if(action->type == Action::Type::WindowFill) {
         
-            action->scrollPos = scrollPos;
-            action->scrollSize = scrollSize;
+            action->scrollStartPos = scrollPos;
+            action->scrollStartSize = scrollSize;
             
             coc::Rect scrollRect = contentRect;
             scrollRect.fitInto(windowRect, true);
             
-            action->scrollTargetPos.x = scrollRect.getX();
-            action->scrollTargetPos.y = scrollRect.getY();
-            action->scrollTargetSize.x = scrollRect.getW();
-            action->scrollTargetSize.y = scrollRect.getH();
+            action->scrollFinishPos.x = scrollRect.getX();
+            action->scrollFinishPos.y = scrollRect.getY();
+            action->scrollFinishSize.x = scrollRect.getW();
+            action->scrollFinishSize.y = scrollRect.getH();
         }
     }
     
@@ -268,10 +270,10 @@ void ScrollView::update(float timeDelta) {
             action->progress = coc::map(action->time, 0, action->timeTotal, 0.0, 1.0, true);
         }
         
-        scrollPos.x = coc::map(action->progress, 0.0, 1.0, action->scrollPos.x, action->scrollTargetPos.x);
-        scrollPos.y = coc::map(action->progress, 0.0, 1.0, action->scrollPos.y, action->scrollTargetPos.y);
-        scrollPos.x = coc::map(action->progress, 0.0, 1.0, action->scrollPos.x, action->scrollTargetPos.x);
-        scrollPos.y = coc::map(action->progress, 0.0, 1.0, action->scrollPos.y, action->scrollTargetPos.y);
+        scrollPos.x = coc::map(action->progress, 0.0, 1.0, action->scrollStartPos.x, action->scrollFinishPos.x);
+        scrollPos.y = coc::map(action->progress, 0.0, 1.0, action->scrollStartPos.y, action->scrollFinishPos.y);
+        scrollSize.x = coc::map(action->progress, 0.0, 1.0, action->scrollStartSize.x, action->scrollFinishSize.x);
+        scrollSize.y = coc::map(action->progress, 0.0, 1.0, action->scrollStartSize.y, action->scrollFinishSize.y);
         
         if(action->progress == 1.0) {
             action = nullptr;
@@ -345,14 +347,14 @@ void ScrollView::update(float timeDelta) {
         
             float dragBeyondBounds = scrollPos.x - boundsPos1.x;
             float dragOffset = dragDist.x - dragBeyondBounds;
-            dragBeyondBounds = coc::map(dragBeyondBounds, 0, windowDiagonal, 0, dragBoundsLimit.x, true);
+            dragBeyondBounds = coc::map(dragBeyondBounds, 0, windowDiagonal, 0, windowDiagonal * dragBoundsLimit.x, true);
             scrollPos.x = dragScrollPos.x + dragOffset + dragBeyondBounds;
             
         } else if(scrollPos.x < boundsPos0.x) { // beyond right bounds.
         
             float dragBeyondBounds = scrollPos.x - boundsPos0.x;
             float dragOffset = dragDist.x - dragBeyondBounds;
-            dragBeyondBounds = coc::map(dragBeyondBounds, 0, -windowDiagonal, 0, -dragBoundsLimit.x, true);
+            dragBeyondBounds = coc::map(dragBeyondBounds, 0, -windowDiagonal, 0, -windowDiagonal * dragBoundsLimit.x, true);
             scrollPos.x = dragScrollPos.x + dragOffset + dragBeyondBounds;
         }
 
@@ -360,14 +362,14 @@ void ScrollView::update(float timeDelta) {
         
             float dragBeyondBounds = scrollPos.y - boundsPos1.y;
             float dragOffset = dragDist.y - dragBeyondBounds;
-            dragBeyondBounds = coc::map(dragBeyondBounds, 0, windowDiagonal, 0, dragBoundsLimit.y, true);
+            dragBeyondBounds = coc::map(dragBeyondBounds, 0, windowDiagonal, 0, windowDiagonal * dragBoundsLimit.y, true);
             scrollPos.y = dragScrollPos.y + dragOffset + dragBeyondBounds;
             
         } else if(scrollPos.y < boundsPos0.y) { // beyond bottom bounds.
         
             float dragBeyondBounds = scrollPos.y - boundsPos0.y;
             float dragOffset = dragDist.y - dragBeyondBounds;
-            dragBeyondBounds = coc::map(dragBeyondBounds, 0, -windowDiagonal, 0, -dragBoundsLimit.y, true);
+            dragBeyondBounds = coc::map(dragBeyondBounds, 0, -windowDiagonal, 0, -windowDiagonal * dragBoundsLimit.y, true);
             scrollPos.y = dragScrollPos.y + dragOffset + dragBeyondBounds;
         }
 
