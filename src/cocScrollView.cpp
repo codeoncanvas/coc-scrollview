@@ -96,15 +96,15 @@ coc::Rect ScrollView::getContentRect() const {
 
 //--------------------------------------------------------------
 void ScrollView::setScrollToFitWindow(float time) {
-    commands.push_back( Command::create() );
-    commands.back()->type = Command::Type::WindowFit;
-    commands.back()->timeTotal = time;
+    actions.push_back( Action::create() );
+    actions.back()->type = Action::Type::WindowFit;
+    actions.back()->timeTotal = time;
 }
 
 void ScrollView::setScrollToFillWindow(float time) {
-    commands.push_back( Command::create() );
-    commands.back()->type = Command::Type::WindowFill;
-    commands.back()->timeTotal = time;
+    actions.push_back( Action::create() );
+    actions.back()->type = Action::Type::WindowFill;
+    actions.back()->timeTotal = time;
 }
 
 const glm::vec2 & ScrollView::getScrollPos() const {
@@ -193,6 +193,7 @@ void ScrollView::setup() {
 //--------------------------------------------------------------
 void ScrollView::update(float timeDelta) {
 
+    coc::Rect contentRect = getContentRect();
     coc::Rect windowRect = getWindowRect();
     float windowW = windowRect.getW();
     float windowH = windowRect.getH();
@@ -233,18 +234,47 @@ void ScrollView::update(float timeDelta) {
         buttons[i]->update();
     }
     
-    //---------------------------------------------------------- commands.
-    if(commands.size() > 0) {
-        command = commands.back();
-        commands.clear();
+    //---------------------------------------------------------- actions.
+    if(actions.size() > 0) {
+        action = actions.back();
+        actions.clear();
         
-        if(command->type == Command::Type::WindowFit) {
-        
-            //
-        
-        } else if(command->type == Command::Type::WindowFill) {
+        if(action->type == Action::Type::WindowFit) {
         
             //
+        
+        } else if(action->type == Action::Type::WindowFill) {
+        
+            action->scrollPos = scrollPos;
+            action->scrollSize = scrollSize;
+            
+            coc::Rect scrollRect = contentRect;
+            scrollRect.fitInto(windowRect, true);
+            
+            action->scrollTargetPos.x = scrollRect.getX();
+            action->scrollTargetPos.y = scrollRect.getY();
+            action->scrollTargetSize.x = scrollRect.getW();
+            action->scrollTargetSize.y = scrollRect.getH();
+        }
+    }
+    
+    bool bActioning = (action != nullptr);
+    if(bActioning) {
+    
+        if(action->timeTotal == 0) {
+            action->progress = 1.0;
+        } else {
+            action->time += timeDelta;
+            action->progress = coc::map(action->time, 0, action->timeTotal, 0.0, 1.0, true);
+        }
+        
+        scrollPos.x = coc::map(action->progress, 0.0, 1.0, action->scrollPos.x, action->scrollTargetPos.x);
+        scrollPos.y = coc::map(action->progress, 0.0, 1.0, action->scrollPos.y, action->scrollTargetPos.y);
+        scrollPos.x = coc::map(action->progress, 0.0, 1.0, action->scrollPos.x, action->scrollTargetPos.x);
+        scrollPos.y = coc::map(action->progress, 0.0, 1.0, action->scrollPos.y, action->scrollTargetPos.y);
+        
+        if(action->progress == 1.0) {
+            action = nullptr;
         }
     }
     
@@ -258,7 +288,8 @@ void ScrollView::update(float timeDelta) {
         }
     }
     
-    bool bDragging = (dragButton != nullptr);
+    bool bDragging = true;
+    bDragging = bDragging && (dragButton != nullptr);
     if(bDragging) {
         
         dragMovePosPrev = dragMovePos;

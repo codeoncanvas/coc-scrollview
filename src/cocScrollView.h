@@ -20,19 +20,19 @@ class ScrollView {
 public:
 
     //----------------------------------------------------------
-    class Command;
-    typedef std::shared_ptr<Command> CommandRef;
+    class Action;
+    typedef std::shared_ptr<Action> ActionRef;
     
-    class Command {
+    class Action {
     public:
-        static CommandRef create() { return CommandRef(new Command()); }
+        static ActionRef create() { return ActionRef(new Action()); }
         
         enum Type {
             WindowFit=0,
             WindowFill
         };
         
-        Command():
+        Action():
         time(0),
         timeTotal(0),
         progress(0) {
@@ -135,8 +135,8 @@ protected:
     glm::vec2 scrollPos;
     glm::vec2 scrollSize;
     
-    std::vector<CommandRef> commands;
-    CommandRef command;
+    std::vector<ActionRef> actions;
+    ActionRef action;
 
     glm::vec2 dragScrollPos;
     glm::vec2 dragDownPos;
