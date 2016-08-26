@@ -14,6 +14,8 @@ static float const kEasingStop = 0.001;
 //--------------------------------------------------------------
 ScrollView::ScrollView() :
 numOfButtons(10),
+bEnabled(true),
+bEnabledChanged(false),
 bWindowPosChanged(false),
 bWindowSizeChanged(false),
 bContentPosChanged(false),
@@ -181,6 +183,16 @@ const glm::vec2 & ScrollView::getBounceEasing() const {
 }
 
 //--------------------------------------------------------------
+void ScrollView::setEnabled(bool value) {
+    bEnabledChanged = bEnabled != value;
+    bEnabled = value;
+}
+
+bool ScrollView::getEnebled() const {
+    return bEnabled;
+}
+
+//--------------------------------------------------------------
 const glm::mat4x4 & ScrollView::getModelMatrix() const {
     return modelMatrix;
 }
@@ -232,66 +244,36 @@ void ScrollView::update(float timeDelta) {
         }
     }
     
+    bool bUpdateButtonEnabled = false;
+    bUpdateButtonEnabled = bUpdateButtonEnabled || bNumOfButtonsChanged;
+    bUpdateButtonEnabled = bUpdateButtonEnabled || bEnabledChanged;
+    if(bUpdateButtonEnabled) {
+        for(int i=0; i<buttons.size(); i++) {
+            buttons[i]->setEnabled(bEnabled);
+            buttons[i]->reset();
+        }
+    }
+    
     for(int i=0; i<buttons.size(); i++) {
         buttons[i]->update();
     }
     
-    //---------------------------------------------------------- actions.
-    if(actions.size() > 0) {
-        action = actions.back();
-        actions.clear();
-        
-        if(action->type == Action::Type::WindowFit) {
-        
-            //
-        
-        } else if(action->type == Action::Type::WindowFill) {
-        
-            action->scrollStartPos = scrollPos;
-            action->scrollStartSize = scrollSize;
-            
-            coc::Rect scrollRect = contentRect;
-            scrollRect.fitInto(windowRect, true);
-            
-            action->scrollFinishPos.x = scrollRect.getX();
-            action->scrollFinishPos.y = scrollRect.getY();
-            action->scrollFinishSize.x = scrollRect.getW();
-            action->scrollFinishSize.y = scrollRect.getH();
-        }
-    }
-    
-    bool bActioning = (action != nullptr);
-    if(bActioning) {
-    
-        if(action->timeTotal == 0) {
-            action->progress = 1.0;
-        } else {
-            action->time += timeDelta;
-            action->progress = coc::map(action->time, 0, action->timeTotal, 0.0, 1.0, true);
-        }
-        
-        scrollPos.x = coc::map(action->progress, 0.0, 1.0, action->scrollStartPos.x, action->scrollFinishPos.x);
-        scrollPos.y = coc::map(action->progress, 0.0, 1.0, action->scrollStartPos.y, action->scrollFinishPos.y);
-        scrollSize.x = coc::map(action->progress, 0.0, 1.0, action->scrollStartSize.x, action->scrollFinishSize.x);
-        scrollSize.y = coc::map(action->progress, 0.0, 1.0, action->scrollStartSize.y, action->scrollFinishSize.y);
-        
-        if(action->progress == 1.0) {
-            action = nullptr;
-        }
-    }
-    
     //---------------------------------------------------------- drag.
+    bool bDragging = false;
+    bool bDragStarted = false;
+    
     for(int i=0; i<buttons.size(); i++) {
         if(buttons[i]->pressedInside()) {
             dragButton = buttons[i];
             dragScrollPos = scrollPos;
             dragDownPos = dragMovePos = dragMovePosPrev = dragButton->getPointPosLast();
             dragVel = glm::vec2(0, 0);
+            bDragStarted = true;
         }
     }
     
-    bool bDragging = true;
-    bDragging = bDragging && (dragButton != nullptr);
+    bDragging = (dragButton != nullptr);
+    
     if(bDragging) {
         
         dragMovePosPrev = dragMovePos;
@@ -319,6 +301,59 @@ void ScrollView::update(float timeDelta) {
         }
         
         scrollPos += dragVel;
+    }
+    
+    //---------------------------------------------------------- actions.
+    if(bDragStarted) {
+        actions.clear();
+        action = nullptr;
+    }
+    
+    if(actions.size() > 0) {
+        action = actions.back();
+        actions.clear();
+        
+        bool bResizeToWindow = false;
+        bResizeToWindow = bResizeToWindow || (action->type == Action::Type::WindowFit);
+        bResizeToWindow = bResizeToWindow || (action->type == Action::Type::WindowFill);
+        if(bResizeToWindow) {
+        
+            bool bWindowFill = (action->type == Action::Type::WindowFill);
+        
+            action->scrollStartPos = scrollPos;
+            action->scrollStartSize = scrollSize;
+            
+            coc::Rect windowSizeRect;
+            windowSizeRect.setW(windowSize.x);
+            windowSizeRect.setH(windowSize.y);
+            coc::Rect scrollRect = contentRect;
+            scrollRect.fitInto(windowSizeRect, bWindowFill);
+            
+            action->scrollFinishPos.x = scrollRect.getX();
+            action->scrollFinishPos.y = scrollRect.getY();
+            action->scrollFinishSize.x = scrollRect.getW();
+            action->scrollFinishSize.y = scrollRect.getH();
+        }
+    }
+    
+    bool bActioning = (action != nullptr);
+    if(bActioning) {
+    
+        if(action->timeTotal == 0) {
+            action->progress = 1.0;
+        } else {
+            action->time += timeDelta;
+            action->progress = coc::map(action->time, 0, action->timeTotal, 0.0, 1.0, true);
+        }
+        
+        scrollPos.x = coc::map(action->progress, 0.0, 1.0, action->scrollStartPos.x, action->scrollFinishPos.x);
+        scrollPos.y = coc::map(action->progress, 0.0, 1.0, action->scrollStartPos.y, action->scrollFinishPos.y);
+        scrollSize.x = coc::map(action->progress, 0.0, 1.0, action->scrollStartSize.x, action->scrollFinishSize.x);
+        scrollSize.y = coc::map(action->progress, 0.0, 1.0, action->scrollStartSize.y, action->scrollFinishSize.y);
+        
+        if(action->progress == 1.0) {
+            action = nullptr;
+        }
     }
 
     //---------------------------------------------------------- contain to bounds.
@@ -398,6 +433,7 @@ void ScrollView::update(float timeDelta) {
     modelMatrix = glm::scale(modelMatrix, glm::vec3(modelMatrixScale, modelMatrixScale, 1.0));
     
     //---------------------------------------------------------- flags.
+    bEnabledChanged = false;
     bWindowPosChanged = false;
     bWindowSizeChanged = false;
     bContentPosChanged = false;

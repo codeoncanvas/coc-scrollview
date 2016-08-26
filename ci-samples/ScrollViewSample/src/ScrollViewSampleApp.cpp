@@ -20,6 +20,7 @@ class ScrollViewSampleApp : public App {
     void mouseDown( MouseEvent event ) override;
     void mouseDrag( MouseEvent event ) override;
     void mouseUp( MouseEvent event ) override;
+    void keyDown( KeyEvent event ) override;
 
 	Rectf windowRect;
 	Rectf contentRect;
@@ -66,7 +67,9 @@ void ScrollViewSampleApp::setup() {
 
 void ScrollViewSampleApp::update() {
 
-	scrollView->update();
+    float timeDelta = 1.0 / 60.0;
+
+	scrollView->update(timeDelta);
 }
 
 void ScrollViewSampleApp::draw() {
@@ -121,6 +124,12 @@ void ScrollViewSampleApp::mouseDrag( MouseEvent event ) {
 void ScrollViewSampleApp::mouseUp( MouseEvent event ) {
     if(bUserInteractionManual == true) {
         scrollView->pointReleased(event.getX(), event.getY(), 0);
+    }
+}
+
+void ScrollViewSampleApp::keyDown( KeyEvent event ) {
+    if(event.getChar() == ' ') {
+        scrollView->setScrollToFillWindow(1.0);
     }
 }
 

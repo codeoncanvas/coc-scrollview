@@ -44,7 +44,7 @@ public:
         glm::vec2 scrollStartSize;
         glm::vec2 scrollFinishPos;
         glm::vec2 scrollFinishSize;
-        glm::vec2 contentTransformPos;
+        glm::vec2 contentTransformPoint;
         float time;
         float timeTotal;
         float progress;
@@ -97,6 +97,9 @@ public:
     void setBounceEasing(const glm::vec2 & value);
     const glm::vec2 & getBounceEasing() const;
     
+    void setEnabled(bool value);
+    bool getEnebled() const;
+    
     const glm::mat4x4 & getModelMatrix() const;
     const float * getModelMatrixPtr() const;
     
@@ -122,6 +125,8 @@ protected:
     unsigned int numOfButtons;
     std::vector<coc::ButtonRef> buttons;
     coc::ButtonRef dragButton;
+    bool bEnabled;
+    bool bEnabledChanged;
     
     glm::vec2 windowPos;
     glm::vec2 windowSize;
