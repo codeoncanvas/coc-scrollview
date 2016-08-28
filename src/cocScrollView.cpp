@@ -433,31 +433,31 @@ void ScrollView::update(float timeDelta) {
                 p0 += windowPoint;
                 p1 += windowPoint;
                 
-                glm::vec2 boundsPos0(windowSize.x - scrollSize.x,
-                                     windowSize.y - scrollSize.y);
-                glm::vec2 boundsPos1(0, 0);
-                
-                if(scrollSize.x < windowSize.x) {
-                    boundsPos0.x = boundsPos1.x = (windowSize.x - scrollSize.x) * 0.5;
-                }
-                if(scrollSize.y < windowSize.y) {
-                    boundsPos0.y = boundsPos1.y = (windowSize.y - scrollSize.y) * 0.5;
-                }
-                
                 glm::vec2 scrollFinishPos = p0;
                 glm::vec2 scrollFinishSize = p1 - p0;
                 
-//                if(scrollFinishPos.x > boundsPos1.x) { // beyond left bounds.
-//                    scrollFinishPos.x = boundsPos1.x;
-//                } else if(scrollFinishPos.x < boundsPos0.x) { // beyond right bounds.
-//                    scrollFinishPos.x = boundsPos0.x;
-//                }
-//
-//                if(scrollFinishPos.y > boundsPos1.y) { // beyond top bounds.
-//                    scrollFinishPos.y = boundsPos1.y;
-//                } else if(scrollFinishPos.y < boundsPos0.y) { // beyond bottom bounds.
-//                    scrollFinishPos.y = boundsPos0.y;
-//                }
+                glm::vec2 boundsPos0(windowSize.x - scrollFinishSize.x,
+                                     windowSize.y - scrollFinishSize.y);
+                glm::vec2 boundsPos1(0, 0);
+                
+                if(scrollFinishSize.x < windowSize.x) {
+                    boundsPos0.x = boundsPos1.x = (windowSize.x - scrollFinishSize.x) * 0.5;
+                }
+                if(scrollFinishSize.y < windowSize.y) {
+                    boundsPos0.y = boundsPos1.y = (windowSize.y - scrollFinishSize.y) * 0.5;
+                }
+                
+                if(scrollFinishPos.x > boundsPos1.x) { // beyond left bounds.
+                    scrollFinishPos.x = boundsPos1.x;
+                } else if(scrollFinishPos.x < boundsPos0.x) { // beyond right bounds.
+                    scrollFinishPos.x = boundsPos0.x;
+                }
+
+                if(scrollFinishPos.y > boundsPos1.y) { // beyond top bounds.
+                    scrollFinishPos.y = boundsPos1.y;
+                } else if(scrollFinishPos.y < boundsPos0.y) { // beyond bottom bounds.
+                    scrollFinishPos.y = boundsPos0.y;
+                }
 
                 action->scrollFinishPos = scrollFinishPos;
                 action->scrollFinishSize = scrollFinishSize;
