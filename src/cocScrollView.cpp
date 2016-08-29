@@ -200,6 +200,33 @@ bool ScrollView::getEnebled() const {
 }
 
 //--------------------------------------------------------------
+void ScrollView::setDoubleTapTimeLimit(float value) {
+    doubleTapTimeLimit = value;
+}
+
+float ScrollView::getDoubleTapTimeLimit() const {
+    return doubleTapTimeLimit;
+}
+
+//--------------------------------------------------------------
+void ScrollView::setDoubleTapDistLimit(float value) {
+    doubleTapDistLimit = value;
+}
+
+float ScrollView::getDoubleTapDistLimit() const {
+    return doubleTapDistLimit;
+}
+
+//--------------------------------------------------------------
+void ScrollView::setDoubleTapZoomRate(float value) {
+    doubleTapZoomRate = value;
+}
+
+float ScrollView::getDoubleTapZoomRate() const {
+    return doubleTapZoomRate;
+}
+
+//--------------------------------------------------------------
 const glm::mat4x4 & ScrollView::getModelMatrix() const {
     return modelMatrix;
 }

@@ -123,6 +123,15 @@ public:
     void setEnabled(bool value);
     bool getEnebled() const;
     
+    void setDoubleTapTimeLimit(float value);
+    float getDoubleTapTimeLimit() const;
+    
+    void setDoubleTapDistLimit(float value);
+    float getDoubleTapDistLimit() const;
+    
+    void setDoubleTapZoomRate(float value);
+    float getDoubleTapZoomRate() const;
+    
     const glm::mat4x4 & getModelMatrix() const;
     const float * getModelMatrixPtr() const;
     
@@ -149,9 +158,6 @@ protected:
     std::vector<ButtonRef> buttons;
     ButtonRef buttonDrag;
     ButtonRef buttonDoubleTap;
-    float doubleTapTimeLimit;
-    float doubleTapDistLimit;
-    float doubleTapZoomRate;
     bool bEnabled;
     bool bEnabledChanged;
     
@@ -182,6 +188,10 @@ protected:
     
     glm::vec2 scrollEasing;
     glm::vec2 bounceEasing;
+    
+    float doubleTapTimeLimit;
+    float doubleTapDistLimit;
+    float doubleTapZoomRate;
     
     glm::mat4 modelMatrix;
     
