@@ -94,6 +94,7 @@ public:
     const glm::vec2 & getContentPos() const;
     const glm::vec2 & getContentSize() const;
     coc::Rect getContentRect() const;
+    float getContentDiagonal() const;
     
     void setScrollToFitWindow(float time=0);
     void setScrollToFillWindow(float time=0);
@@ -150,7 +151,7 @@ protected:
     ButtonRef buttonDoubleTap;
     float doubleTapTimeLimit;
     float doubleTapDistLimit;
-    float doubleTapZoomTime;
+    float doubleTapZoomRate;
     bool bEnabled;
     bool bEnabledChanged;
     

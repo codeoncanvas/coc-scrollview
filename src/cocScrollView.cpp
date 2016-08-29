@@ -16,7 +16,7 @@ ScrollView::ScrollView() :
 numOfButtons(10),
 doubleTapTimeLimit(0.25),
 doubleTapDistLimit(22),
-doubleTapZoomTime(0.5),
+doubleTapZoomRate(2.0),
 bEnabled(true),
 bEnabledChanged(false),
 bWindowPosChanged(false),
@@ -68,7 +68,7 @@ coc::Rect ScrollView::getWindowRect() const {
 }
 
 float ScrollView::getWindowDiagonal() const {
-    return std::sqrt(windowSize.x * windowSize.x + windowSize.y * windowSize.y);
+    return glm::length(windowSize);
 }
 
 //--------------------------------------------------------------
@@ -101,6 +101,10 @@ coc::Rect ScrollView::getContentRect() const {
     rect.setW(contentSize.x);
     rect.setH(contentSize.y);
     return rect;
+}
+
+float ScrollView::getContentDiagonal() const {
+    return glm::length(contentSize);
 }
 
 //--------------------------------------------------------------
@@ -361,7 +365,6 @@ void ScrollView::update(float timeDelta) {
     if(bDoubleTapStart) {
         actions.push_back( Action::create() );
         actions.back()->type = Action::Type::DoubleTapZoom;
-        actions.back()->timeTotal = doubleTapZoomTime;
         actions.back()->windowHitPoint.x = buttonDoubleTapPos.x - windowPos.x;
         actions.back()->windowHitPoint.y = buttonDoubleTapPos.y - windowPos.y;
     }
@@ -460,6 +463,11 @@ void ScrollView::update(float timeDelta) {
                 action->scrollFinishPos = scrollFinishPos;
                 action->scrollFinishSize = scrollFinishSize;
             }
+            
+            float diagStart = glm::length(action->scrollStartSize);
+            float diagFinish = glm::length(action->scrollFinishSize);
+            float diagContent = glm::length(contentSize);
+            action->timeTotal = coc::abs(diagFinish - diagStart) / (diagContent * doubleTapZoomRate);
         }
     }
     
