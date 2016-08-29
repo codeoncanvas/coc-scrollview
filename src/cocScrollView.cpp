@@ -299,8 +299,6 @@ void ScrollView::update(float timeDelta) {
                 buttonDrag = buttonRef;
                 bDragStart = true;
             }
-            
-            break;
         }
         
         bool bReleased = false;
