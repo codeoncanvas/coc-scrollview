@@ -107,6 +107,18 @@ float ScrollView::getContentDiagonal() const {
     return glm::length(contentSize);
 }
 
+glm::vec2 ScrollView::getContentPointAtScreenPoint(const glm::vec2 & screenPoint) const {
+    glm::vec2 windowPoint = screenPoint - windowPos;
+    return getContentPointAtWindowPoint(windowPoint);
+}
+
+glm::vec2 ScrollView::getContentPointAtWindowPoint(const glm::vec2 & windowPoint) const {
+    glm::vec2 contentPoint;
+    contentPoint.x = coc::map(windowPoint.x, scrollPos.x, scrollPos.x + scrollSize.x, 0, contentSize.x, true);
+    contentPoint.y = coc::map(windowPoint.y, scrollPos.y, scrollPos.y + scrollSize.y, 0, contentSize.y, true);
+    return contentPoint;
+}
+
 //--------------------------------------------------------------
 void ScrollView::setScrollToFitWindow(float time) {
     actions.push_back( Action::create() );
@@ -448,9 +460,7 @@ void ScrollView::update(float timeDelta) {
                 float zoomScale = 1.0;
             
                 const glm::vec2 & windowPoint = action->windowHitPoint;
-                glm::vec2 contentPoint;
-                contentPoint.x = coc::map(windowPoint.x, scrollPos.x, scrollPos.x + scrollSize.x, 0, contentSize.x, true);
-                contentPoint.y = coc::map(windowPoint.y, scrollPos.y, scrollPos.y + scrollSize.y, 0, contentSize.x, true);
+                glm::vec2 contentPoint = getContentPointAtWindowPoint(windowPoint);
                 
                 glm::vec2 p0(0, 0);
                 glm::vec2 p1(contentSize.x, contentSize.y);

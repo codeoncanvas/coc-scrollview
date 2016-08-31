@@ -95,6 +95,8 @@ public:
     const glm::vec2 & getContentSize() const;
     coc::Rect getContentRect() const;
     float getContentDiagonal() const;
+    glm::vec2 getContentPointAtScreenPoint(const glm::vec2 & screenPoint) const;
+    glm::vec2 getContentPointAtWindowPoint(const glm::vec2 & windowPoint) const;
     
     void setScrollToFitWindow(float time=0);
     void setScrollToFillWindow(float time=0);
