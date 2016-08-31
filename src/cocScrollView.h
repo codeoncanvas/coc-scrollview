@@ -123,7 +123,7 @@ public:
     const glm::vec2 & getBounceEasing() const;
     
     void setEnabled(bool value);
-    bool getEnebled() const;
+    bool getEnabled() const;
     
     void setDoubleTapTimeLimit(float value);
     float getDoubleTapTimeLimit() const;

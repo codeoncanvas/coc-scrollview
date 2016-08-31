@@ -207,7 +207,7 @@ void ScrollView::setEnabled(bool value) {
     bEnabled = value;
 }
 
-bool ScrollView::getEnebled() const {
+bool ScrollView::getEnabled() const {
     return bEnabled;
 }
 
