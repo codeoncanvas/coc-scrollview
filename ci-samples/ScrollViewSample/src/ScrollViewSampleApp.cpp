@@ -50,19 +50,15 @@ void ScrollViewSampleApp::setup() {
     scrollView = ciScrollView::create();
     scrollView->setWindowRect( windowRect ); // window size and position of scroll view.
 	scrollView->setContentRect( contentRect ); // the pixel size of the content being displayed in scroll view.
-//	scrollView->fitContentToWindow(coc::COC_ASPECT_RATIO_KEEP); // fits content into window, works with ofAspectRatioMode values.
 
 	scrollView->setScrollEasing(0.3); // smoothness of scrolling, between 0 and 1.
 	scrollView->setBounceEasing(0.2); // the speed of bounce back, between 0 and 1.
 	scrollView->setDragVelocityDecay(0.9); // the speed of decay of drag velocity after release, between 0 and 1.
     scrollView->setDragBoundsLimit(0.1); // the limit on how far the content can be dragged outside of the bounds, between 0 and 1.
-//	scrollView->setUserInteraction((bUserInteractionManual == false)); // enable / disable mouse or touch interaction.
 
-//	scrollView->setDoubleTapZoom(true); // enable double tap zoom.
-//	scrollView->setDoubleTapZoomIncrement(1.0); // the increment value of zoom on double tap, between 0 and 1.
-//	scrollView->setDoubleTapZoomIncrementTimeInSec(0.3); // the time amount of time for zoom increment.
-//	scrollView->setDoubleTapRegistrationTimeInSec(0.25); // the time threshold between taps for double tap event to register.
-//	scrollView->setDoubleTapRegistrationDistanceInPixels(20); // the distance threshold between taps for double tap event to register.
+    scrollView->setDoubleTapTimeLimit(0.25);
+    scrollView->setDoubleTapDistLimit(22);
+    scrollView->setDoubleTapZoomRate(2.0);
 
     scrollView->setScrollToFitWindow();
 }
