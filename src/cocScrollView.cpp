@@ -133,6 +133,13 @@ void ScrollView::setScrollToFillWindow(float time) {
     actions.back()->timeTotal = time;
 }
 
+void ScrollView::setScrollPositionNormalized(const glm::vec2 & value, float time) {
+    actions.push_back( Action::create() );
+    actions.back()->type = Action::Type::ScrollPosition;
+    actions.back()->timeTotal = time;
+    actions.back()->scrollPositionNormalized = value;
+}
+
 const glm::vec2 & ScrollView::getScrollPos() const {
     return scrollPos;
 }
@@ -148,6 +155,55 @@ coc::Rect ScrollView::getScrollRect() const {
     rect.setW(scrollSize.x);
     rect.setH(scrollSize.y);
     return rect;
+}
+
+glm::vec2 ScrollView::getScrollBoundsUpperLeft() const {
+    return getScrollBoundsUpperLeft(scrollSize);
+}
+
+glm::vec2 ScrollView::getScrollBoundsUpperLeft(const glm::vec2 & scrollSize) const {
+    glm::vec2 point(windowSize.x - scrollSize.x,
+                    windowSize.y - scrollSize.y);
+    
+    // when the scroll size is smaller then the window size,
+    // center the scroll view in the middle of the window.
+    
+    if(scrollSize.x < windowSize.x) {
+        point.x = (windowSize.x - scrollSize.x) * 0.5;
+    }
+    if(scrollSize.y < windowSize.y) {
+        point.y = (windowSize.y - scrollSize.y) * 0.5;
+    }
+    return point;
+}
+
+glm::vec2 ScrollView::getScrollBoundsLowerRight() const {
+    return getScrollBoundsLowerRight(scrollSize);
+}
+
+glm::vec2 ScrollView::getScrollBoundsLowerRight(const glm::vec2 & scrollSize) const {
+    glm::vec2 point(0, 0);
+    
+    // when the scroll size is smaller then the window size,
+    // center the scroll view in the middle of the window.
+    
+    if(scrollSize.x < windowSize.x) {
+        point.x = (windowSize.x - scrollSize.x) * 0.5;
+    }
+    if(scrollSize.y < windowSize.y) {
+        point.y = (windowSize.y - scrollSize.y) * 0.5;
+    }
+    return point;
+}
+
+glm::vec2 ScrollView::getScrollPositionNormalized() const {
+    glm::vec2 boundsUL = getScrollBoundsUpperLeft();
+    glm::vec2 boundsLR = getScrollBoundsLowerRight();
+
+    glm::vec2 pos;
+    pos.x = coc::map(scrollPos.x, boundsLR.x, boundsUL.x, 0.0, 1.0);
+    pos.y = coc::map(scrollPos.y, boundsLR.y, boundsUL.y, 0.0, 1.0);
+    return pos;
 }
 
 //--------------------------------------------------------------
@@ -485,27 +541,19 @@ void ScrollView::update(float timeDelta) {
                 glm::vec2 scrollFinishPos = p0;
                 glm::vec2 scrollFinishSize = p1 - p0;
                 
-                glm::vec2 boundsPos0(windowSize.x - scrollFinishSize.x,
-                                     windowSize.y - scrollFinishSize.y);
-                glm::vec2 boundsPos1(0, 0);
+                glm::vec2 boundsUL = getScrollBoundsUpperLeft(scrollFinishSize);
+                glm::vec2 boundsLR = getScrollBoundsLowerRight(scrollFinishSize);
                 
-                if(scrollFinishSize.x < windowSize.x) {
-                    boundsPos0.x = boundsPos1.x = (windowSize.x - scrollFinishSize.x) * 0.5;
-                }
-                if(scrollFinishSize.y < windowSize.y) {
-                    boundsPos0.y = boundsPos1.y = (windowSize.y - scrollFinishSize.y) * 0.5;
-                }
-                
-                if(scrollFinishPos.x > boundsPos1.x) { // beyond left bounds.
-                    scrollFinishPos.x = boundsPos1.x;
-                } else if(scrollFinishPos.x < boundsPos0.x) { // beyond right bounds.
-                    scrollFinishPos.x = boundsPos0.x;
+                if(scrollFinishPos.x > boundsLR.x) { // beyond left bounds.
+                    scrollFinishPos.x = boundsLR.x;
+                } else if(scrollFinishPos.x < boundsUL.x) { // beyond right bounds.
+                    scrollFinishPos.x = boundsUL.x;
                 }
 
-                if(scrollFinishPos.y > boundsPos1.y) { // beyond top bounds.
-                    scrollFinishPos.y = boundsPos1.y;
-                } else if(scrollFinishPos.y < boundsPos0.y) { // beyond bottom bounds.
-                    scrollFinishPos.y = boundsPos0.y;
+                if(scrollFinishPos.y > boundsLR.y) { // beyond top bounds.
+                    scrollFinishPos.y = boundsLR.y;
+                } else if(scrollFinishPos.y < boundsUL.y) { // beyond bottom bounds.
+                    scrollFinishPos.y = boundsUL.y;
                 }
 
                 action->scrollFinishPos = scrollFinishPos;
@@ -517,6 +565,22 @@ void ScrollView::update(float timeDelta) {
             float diagContent = glm::length(contentSize);
             action->timeTotal = coc::abs(diagFinish - diagStart) / (diagContent * doubleTapZoomRate);
         }
+        
+        bool bScrollPositionChange = false;
+        bScrollPositionChange = bScrollPositionChange || (action->type == ScrollView::Action::Type::ScrollPosition);
+        if(bScrollPositionChange) {
+        
+            action->scrollStartPos = scrollPos;
+            action->scrollStartSize = scrollSize;
+            
+            glm::vec2 boundsUL = getScrollBoundsUpperLeft();
+            glm::vec2 boundsLR = getScrollBoundsLowerRight();
+            
+            action->scrollFinishSize = scrollSize;
+            action->scrollFinishPos.x = coc::map(action->scrollPositionNormalized.x, 0.0, 1.0, boundsLR.x, boundsUL.x, true);
+            action->scrollFinishPos.y = coc::map(action->scrollPositionNormalized.y, 0.0, 1.0, boundsLR.y, boundsUL.y, true);
+        }
+        
     }
     
     bool bActioning = (action != nullptr);
@@ -544,19 +608,8 @@ void ScrollView::update(float timeDelta) {
     bContainToBounds = bContainToBounds && (bActioning == false);
     if(bContainToBounds) {
 
-        glm::vec2 boundsPos0(windowSize.x - scrollSize.x,
-                             windowSize.y - scrollSize.y);
-        glm::vec2 boundsPos1(0, 0);
-        
-        // when the scroll size is smaller then the window size,
-        // center the scroll view in the middle of the window.
-        
-        if(scrollSize.x < windowSize.x) {
-            boundsPos0.x = boundsPos1.x = (windowSize.x - scrollSize.x) * 0.5;
-        }
-        if(scrollSize.y < windowSize.y) {
-            boundsPos0.y = boundsPos1.y = (windowSize.y - scrollSize.y) * 0.5;
-        }
+        glm::vec2 boundsUL = getScrollBoundsUpperLeft();
+        glm::vec2 boundsLR = getScrollBoundsLowerRight();
         
         if(bDragging) {
 
@@ -565,31 +618,31 @@ void ScrollView::update(float timeDelta) {
             // it allows the content to be dragged slightly past the bounds,
             // to a limit set in the dragBoundsLimit.
 
-            if(scrollPos.x > boundsPos1.x) { // beyond left bounds.
+            if(scrollPos.x > boundsLR.x) { // beyond left bounds.
             
-                float dragBeyondBounds = scrollPos.x - boundsPos1.x;
+                float dragBeyondBounds = scrollPos.x - boundsLR.x;
                 float dragOffset = dragDist.x - dragBeyondBounds;
                 dragBeyondBounds = coc::map(dragBeyondBounds, 0, windowDiagonal, 0, windowDiagonal * dragBoundsLimit.x, true);
                 scrollPos.x = dragScrollPos.x + dragOffset + dragBeyondBounds;
                 
-            } else if(scrollPos.x < boundsPos0.x) { // beyond right bounds.
+            } else if(scrollPos.x < boundsUL.x) { // beyond right bounds.
             
-                float dragBeyondBounds = scrollPos.x - boundsPos0.x;
+                float dragBeyondBounds = scrollPos.x - boundsUL.x;
                 float dragOffset = dragDist.x - dragBeyondBounds;
                 dragBeyondBounds = coc::map(dragBeyondBounds, 0, -windowDiagonal, 0, -windowDiagonal * dragBoundsLimit.x, true);
                 scrollPos.x = dragScrollPos.x + dragOffset + dragBeyondBounds;
             }
 
-            if(scrollPos.y > boundsPos1.y) { // beyond top bounds.
+            if(scrollPos.y > boundsLR.y) { // beyond top bounds.
             
-                float dragBeyondBounds = scrollPos.y - boundsPos1.y;
+                float dragBeyondBounds = scrollPos.y - boundsLR.y;
                 float dragOffset = dragDist.y - dragBeyondBounds;
                 dragBeyondBounds = coc::map(dragBeyondBounds, 0, windowDiagonal, 0, windowDiagonal * dragBoundsLimit.y, true);
                 scrollPos.y = dragScrollPos.y + dragOffset + dragBeyondBounds;
                 
-            } else if(scrollPos.y < boundsPos0.y) { // beyond bottom bounds.
+            } else if(scrollPos.y < boundsUL.y) { // beyond bottom bounds.
             
-                float dragBeyondBounds = scrollPos.y - boundsPos0.y;
+                float dragBeyondBounds = scrollPos.y - boundsUL.y;
                 float dragOffset = dragDist.y - dragBeyondBounds;
                 dragBeyondBounds = coc::map(dragBeyondBounds, 0, -windowDiagonal, 0, -windowDiagonal * dragBoundsLimit.y, true);
                 scrollPos.y = dragScrollPos.y + dragOffset + dragBeyondBounds;
@@ -602,8 +655,8 @@ void ScrollView::update(float timeDelta) {
             // it moves the content back into the bounds with an easing value set in bounceEasing.
             
             glm::vec2 contentTargetPos;
-            contentTargetPos.x = coc::clamp(scrollPos.x, boundsPos0.x, boundsPos1.x);
-            contentTargetPos.y = coc::clamp(scrollPos.y, boundsPos0.y, boundsPos1.y);
+            contentTargetPos.x = coc::clamp(scrollPos.x, boundsUL.x, boundsLR.x);
+            contentTargetPos.y = coc::clamp(scrollPos.y, boundsUL.y, boundsLR.y);
             
             scrollPos += (contentTargetPos - scrollPos) * bounceEasing;
             if(coc::abs(scrollPos.x - contentTargetPos.x) < kEasingStop) {

@@ -51,6 +51,7 @@ public:
         enum Type {
             WindowFit=0,
             WindowFill,
+            ScrollPosition,
             DoubleTapZoom
         };
         
@@ -67,6 +68,7 @@ public:
         glm::vec2 scrollFinishPos;
         glm::vec2 scrollFinishSize;
         glm::vec2 windowHitPoint;
+        glm::vec2 scrollPositionNormalized;
         float time;
         float timeTotal;
         float progress;
@@ -100,9 +102,15 @@ public:
     
     void setScrollToFitWindow(float time=0);
     void setScrollToFillWindow(float time=0);
+    void setScrollPositionNormalized(const glm::vec2 & value, float time=0);
     const glm::vec2 & getScrollPos() const;
     const glm::vec2 & getScrollSize() const;
     coc::Rect getScrollRect() const;
+    glm::vec2 getScrollBoundsUpperLeft() const;
+    glm::vec2 getScrollBoundsUpperLeft(const glm::vec2 & scrollSize) const;
+    glm::vec2 getScrollBoundsLowerRight() const;
+    glm::vec2 getScrollBoundsLowerRight(const glm::vec2 & scrollSize) const;
+    glm::vec2 getScrollPositionNormalized() const;
     
     void setMaxNumOfTouchPoints(unsigned int value) { numOfButtons = value; }
     
