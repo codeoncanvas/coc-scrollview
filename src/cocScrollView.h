@@ -125,6 +125,9 @@ public:
     void setEnabled(bool value);
     bool getEnabled() const;
     
+    void setDoubleTapEnabled(bool value);
+    bool getDoubleTapEnabled() const;
+    
     void setDoubleTapTimeLimit(float value);
     float getDoubleTapTimeLimit() const;
     
@@ -191,6 +194,7 @@ protected:
     glm::vec2 scrollEasing;
     glm::vec2 bounceEasing;
     
+    bool bDoubleTapEnabled;
     float doubleTapTimeLimit;
     float doubleTapDistLimit;
     float doubleTapZoomRate;

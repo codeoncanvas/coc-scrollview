@@ -14,9 +14,6 @@ static float const kEasingStop = 0.001;
 //--------------------------------------------------------------
 ScrollView::ScrollView() :
 numOfButtons(10),
-doubleTapTimeLimit(0.25),
-doubleTapDistLimit(22),
-doubleTapZoomRate(2.0),
 bEnabled(true),
 bEnabledChanged(false),
 bWindowPosChanged(false),
@@ -26,7 +23,11 @@ bContentSizeChanged(false),
 dragVelDecay(0.9, 0.9),
 dragBoundsLimit(0.1, 0.1),
 scrollEasing(1.0, 1.0),
-bounceEasing(1.0, 1.0) {
+bounceEasing(1.0, 1.0),
+bDoubleTapEnabled(true),
+doubleTapTimeLimit(0.25),
+doubleTapDistLimit(22),
+doubleTapZoomRate(2.0) {
     //
 }
 
@@ -212,6 +213,15 @@ bool ScrollView::getEnabled() const {
 }
 
 //--------------------------------------------------------------
+void ScrollView::setDoubleTapEnabled(bool value) {
+    bDoubleTapEnabled = value;
+}
+
+bool ScrollView::getDoubleTapEnabled() const {
+    return bDoubleTapEnabled;
+}
+
+//--------------------------------------------------------------
 void ScrollView::setDoubleTapTimeLimit(float value) {
     doubleTapTimeLimit = value;
 }
@@ -327,6 +337,7 @@ void ScrollView::update(float timeDelta) {
             // bDoubleTapOnLastPress - prevents a double tap firing twice on 3 quick presses.
         
             bool bDoubleTap = true;
+            bDoubleTap = bDoubleTap && bDoubleTapEnabled;
             bDoubleTap = bDoubleTap && (timeSinceLastPress < doubleTapTimeLimit);
             bDoubleTap = bDoubleTap && (glm::length(posOfThisPress - posOfLastPress) < doubleTapDistLimit);
             bDoubleTap = bDoubleTap && (bDoubleTapOnLastPress == false);
